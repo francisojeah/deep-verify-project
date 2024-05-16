@@ -1,0 +1,14 @@
+{
+  "name": "deep-verify-project",
+  "version": "1.0.0",
+  "description": "A state of the art deepfake detection project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Francis Okocha-Ojeah",
+  "license": "ISC",
+  "devDependencies": {
+    "turbo": "^1.13.3"
+  }
+}
