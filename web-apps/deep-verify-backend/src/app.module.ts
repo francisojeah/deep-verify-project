@@ -20,7 +20,7 @@ import { MongooseModule } from '@nestjs/mongoose';
   imports: [
     ScheduleModule.forRoot(),
     // ServeStaticModule.forRoot({
-    //   rootPath: join(__dirname, '../../..', 'coupe-frontend', 'dist'),
+    //   rootPath: join(__dirname, '../../..', 'deep-verify-frontend', 'dist'),
     //   exclude: ['/api*'],
     // }),
     ConfigModule.forRoot({ isGlobal: true }),
