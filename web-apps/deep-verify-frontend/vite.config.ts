@@ -20,7 +20,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/backend": {
-        target: "https://coupe-de-escriva-backend.onrender.com",
+        target: "https://deep-verify-backend.onrender.com",
         changeOrigin: true,
       },
     },

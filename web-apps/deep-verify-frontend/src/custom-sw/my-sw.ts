@@ -87,7 +87,7 @@ self.addEventListener('push', event => {
 
   const options = {
     body: data.body,
-    icon: '/assets/images/coupe_logo.png',
+    icon: '/assets/images/logo.png',
   };
 
   event.waitUntil(self.registration.showNotification(data.title, options));
