@@ -4,9 +4,9 @@
 
 - [Project Overview](#-project-overview)
 - [Features](#-features)
-- [Tech Stack](#-tech-stack)
+- [Tech Stack](#️-tech-stack)
 - [File Structure](#-file-structure)
-- [Setup and Installation](#-setup-and-installation)
+- [Setup and Installation](#️-setup-and-installation)
 - [Usage](#-usage)
 - [Model Development](#-model-development)
 - [API Documentation](#-api-documentation)
@@ -17,9 +17,11 @@
 ---
 
 ## 📖 Project Overview
+
 Deep-Verify is a state-of-the-art platform designed to detect deepfake media, encompassing images, videos, and audio files. Leveraging advanced machine learning algorithms, Deep-Verify ensures accurate and reliable detection of deepfakes. The platform is built with a modern tech stack including a frontend using React and Vite, a backend powered by NestJS, and a microservice for model inference implemented with FastAPI. Additionally, the platform includes an educational game to help users learn how to identify deepfakes.
 
 ## ✨ Features
+
 - **User Authentication:** Secure login and registration system.
 - **DeepFake Detection:** Analyze images, videos, and audio files for deepfake content.
 - **Real or Fake Game:** An interactive game to help users learn to identify deepfakes.
@@ -29,6 +31,7 @@ Deep-Verify is a state-of-the-art platform designed to detect deepfake media, en
 - **Robust Data Handling:** Efficient handling and processing of large datasets.
 
 ## 🛠️ Tech Stack
+
 - **Frontend:** Vite, React, TypeScript
 - **Backend:** NestJS, TypeScript
  **Microservice:** FastAPI, Python
@@ -144,19 +147,23 @@ deep-verify/
 ## ⚙️ Setup and Installation
 
 ### Prerequisites
+
 - Node.js
 - Python 3.x
 - Docker
 - MongoDB
 
 ### Installation Steps
+
 1. **Clone the repository:**
+
 ```
 git clone https://github.com/francisojeah/deep-verify-project.git
 cd deep-verify
 ```
 
 2. **Frontend setup:**
+
 ```
 cd web-apps/frontend
 npm install
@@ -164,6 +171,7 @@ npm run dev
 ```
 
 3. **Backend setup:**
+
 ```
 cd web-apps/backend
 npm install
@@ -171,6 +179,7 @@ npm run start:dev
 ```
 
 4. **Microservice setup:**
+
 ```
 cd web-apps/microservice
 pip install -r requirements.txt
@@ -183,7 +192,7 @@ uvicorn app.main:app --reload
 docker-compose up -d
 ```
 
-5. **Model setup:**
+6. **Model setup:**
 
 ```
 cd models
@@ -191,14 +200,18 @@ python training/train.py
 ```
 
 ## 🚀 Usage
+
 ### Running the Application
+
 1. **Start the frontend:**
+
 ```
 cd apps/frontend
 npm run dev
 ```
 
 2. **Start the backend:**
+
 ```
 cd apps/backend
 npm run start:dev
@@ -212,10 +225,13 @@ uvicorn app.main:app --reload
 ```
 
 ### API Documentation
+
 Access the API documentation at http://localhost:8000/docs for the FastAPI microservice.
 
 ## 🧠 Model Development
+
 ### Data Preprocessing
+
 Run the preprocessing script to prepare the data:
 
 ```
@@ -224,6 +240,7 @@ python preprocess.py
 ```
 
 ### Training the Model
+
 Train the model using the training script:
 
 ```
@@ -232,6 +249,7 @@ python train.py
 ```
 
 ### Evaluating the Model
+
 Evaluate the model's performance:
 ```
 cd models/evaluation
@@ -239,22 +257,26 @@ python evaluate.py
 ```
 
 ### Serving the Model
+
 Serve the trained model with FastAPI:
+
 ```
 cd models/serving
 uvicorn serve:app --reload
 ```
 
-
 ## 📜 API Documentation
-Detailed API documentation can be accessed at http://localhost:8000/docs once the microservice is running.
+
+Detailed API documentation can be accessed at <http://localhost:8000/docs> once the microservice is running.
 
 ## 🤝 Contributing
+
 Contributions are welcome! Please read the CONTRIBUTING.md for guidelines on how to get started.
 
 ## 📜 License
+
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 ## 🙏 Acknowledgements
-We would like to thank the open-source community for providing the tools and libraries that made this project possible. Special thanks to our mentors and peers for their valuable feedback and support.
 
+We would like to thank the open-source community for providing the tools and libraries that made this project possible. Special thanks to our mentors and peers for their valuable feedback and support.
