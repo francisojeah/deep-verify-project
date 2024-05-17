@@ -150,10 +150,10 @@ JWT_SECRET=your-jwt-secret
 
 ## 📚 Documentation
 
-NestJS: <https://docs.nestjs.com/>
-MongoDB: <https://docs.mongodb.com/>
-Swagger: <https://swagger.io/docs/>
-Docker: <https://docs.docker.com/>
+- NestJS: <https://docs.nestjs.com/>
+- MongoDB: <https://docs.mongodb.com/>
+- Swagger: <https://swagger.io/docs/>
+- Docker: <https://docs.docker.com/>
 
 ## 📜 License
 
