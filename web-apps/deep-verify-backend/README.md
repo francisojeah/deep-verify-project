@@ -1,73 +1,164 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 🕵️‍♂️ Deep-Verify Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+#### 📋 Table of Contents
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- [📖 Project Overview](#-project-overview)
+- [✨ Features](#-features)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [📁 File Structure](#-file-structure)
+- [⚙️ Setup and Installation](#%EF%B8%8F-setup-and-installation)
+- [🚀 Usage](#-usage)
+- [🔄 API Versioning](#-api-versioning)
+- [📚 OpenAPI (Swagger) Implementation](#-openapi-swagger-implementation)
+- [🌐 Environment Variables](#-environment-variables)
+- [📚 Documentation](#-documentation)
+- [📜 License](#-license)
+- [🙏 Acknowledgements](#-acknowledgements)
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📖 Project Overview
 
-## Installation
+The backend of Deep-Verify is a powerful and scalable API built with NestJS, designed to handle deepfake detection requests, user authentication, and more. It includes API versioning, MongoDB integration, and OpenAPI (Swagger) documentation for easy API consumption.
 
-```bash
-$ npm install
+## ✨ Features
+
+- **NestJS Framework**: Robust and scalable backend architecture.
+- **API Gateway**: Centralized API gateway for managing requests.
+- **MongoDB**: Efficient and scalable database for storing application data.
+- **API Versioning**: Support for multiple API versions.
+- **OpenAPI (Swagger)**: Automatically generated API documentation.
+- **Modular Structure**: Organized codebase for maintainability and scalability.
+
+## 🛠️ Tech Stack
+
+- **Backend Framework**: NestJS
+- **Database**: MongoDB
+- **API Documentation**: OpenAPI (Swagger)
+- **Versioning**: API versioning for backward compatibility
+- **Containerization**: Docker for consistent development and production environments
+
+## 📁 File Structure
+
+```
+deep-verify/
+├── web-apps/
+│ ├── deep-verify-backend/
+│ │ ├── src/
+│ │ │ ├── modules/
+│ │ │ │ ├── auth/
+│ │ │ │ │ ├── auth.controller.ts
+│ │ │ │ │ ├── auth.module.ts
+│ │ │ │ │ ├── auth.service.ts
+│ │ │ │ ├── users/
+│ │ │ │ │ ├── user.controller.ts
+│ │ │ │ │ ├── user.module.ts
+│ │ │ │ │ ├── user.service.ts
+│ │ │ │ ├── detection/
+│ │ │ │ │ ├── detection.controller.ts
+│ │ │ │ │ ├── detection.module.ts
+│ │ │ │ │ ├── detection.service.ts
+│ │ │ ├── main.ts
+│ │ │ ├── app.module.ts
+│ │ ├── test/
+│ │ │ ├── auth.e2e-spec.ts
+│ │ │ ├── user.e2e-spec.ts
+│ │ ├── package.json
+│ │ ├── nest-cli.json
+│ │ ├── tsconfig.json
+│ │ ├── tsconfig.build.json
+│ │ └── webpack.config.js
 ```
 
-## Running the app
+## ⚙️ Setup and Installation
 
-```bash
-# development
-$ npm run start
+1. **Navigate to the backend directory:**
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```
+cd deep-verify/web-apps/deep-verify-backend
 ```
 
-## Test
+2. **Install dependencies:**
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```
+npm install
 ```
 
-## Support
+3. **Configure environment variables:**
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Create a .env file in the root of the backend project and add your MongoDB URI and other necessary environment variables:
 
-## Stay in touch
+```
+MONGODB_URI=your-mongodb-uri
+JWT_SECRET=your-jwt-secret
+```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+4. **Start the development server:**
 
-## License
+```
+npm run start:dev
+```
 
-Nest is [MIT licensed](LICENSE).
+5. **Build for production:**
+
+```
+npm run build
+```
+
+6. **Start the production server:**
+
+```
+npm run start:prod
+```
+
+## 🚀 Usage
+
+1. **Run the app in development mode:**
+
+```
+npm run start:dev
+```
+
+2. **Build the app for production:**
+
+```
+npm run build
+```
+
+3. Serve the production build:
+
+```
+npm run start:prod
+```
+
+## 🔄 API Versioning
+
+The backend supports API versioning to ensure backward compatibility. API versions are prefixed in the route paths, such as /api/v1/detection.
+
+## 📚 OpenAPI (Swagger) Implementation
+
+The backend uses Swagger for API documentation. Once the server is running, you can access the documentation at <http://localhost:3000/api>.
+
+## 🌐 Environment Variables
+
+Create a .env file in the root directory of your project and add the following environment variables:
+
+```
+MONGODB_URI=your-mongodb-uri
+JWT_SECRET=your-jwt-secret
+```
+
+## 📚 Documentation
+
+NestJS: <https://docs.nestjs.com/>
+MongoDB: <https://docs.mongodb.com/>
+Swagger: <https://swagger.io/docs/>
+Docker: <https://docs.docker.com/>
+
+## 📜 License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+## 🙏 Acknowledgements
+
+Special thanks to all the contributors who made this project possible.
