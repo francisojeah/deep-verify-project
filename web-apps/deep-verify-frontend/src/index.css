@@ -7,6 +7,13 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+
+  --background-light: #FFFFFF; 
+  --primary-text-light: #343A40; 
+
+  --background-dark: #060606;
+  --primary-text-dark: #FFFFFF; 
+
   /* Primary Colors */
   --primary-color-1-hex: #063760;
   --primary-color-2-hex: #597995;
@@ -19,28 +26,60 @@
   --accent-color-1-hex: #40E0BA;
   --accent-color-2-hex: #7FEAD1;
   --accent-color-3-hex: #BFF4E8;
+
+  --scrollbar-track-light: #f0f4fc;
+  --scrollbar-thumb-light: #d1d5db;
+  --scrollbar-thumb-hover-light: #a0aec0;
+
+  --scrollbar-track-dark: #121212;
+  --scrollbar-thumb-dark: #4a5568; 
+  --scrollbar-thumb-hover-dark: #2d3748;
 }
 
-/* Default styles */
-/* width */
+
+/* Light mode styles */
+body {
+  background-color: var(--background-light);
+  /* color: var(--primary-text-light); */
+}
+
+/* Default styles for light mode */
 ::-webkit-scrollbar {
   width: 10px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f0f4fc; /* lighter shade of #0A61EB */
+  background: var(--scrollbar-track-light);
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #0A61EB; /* your primary color */
+  background: var(--scrollbar-thumb-light);
   border-radius: 5px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #094aa4; /* darker shade of #0A61EB */
+  background: var(--scrollbar-thumb-hover-light);
+}
+
+/* Dark mode styles */
+.dark body {
+  background-color: var(--background-dark);
+  /* color: var(--primary-text-dark); */
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-dark);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-dark);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover-dark);
 }
 
 /* Media query for smaller screens */
@@ -174,3 +213,107 @@ a {
     )
     rgb(var(--background-start-rgb));
 } */
+
+
+@keyframes zoom {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.animate-zoom {
+  animation: zoom 1.5s infinite;
+}
+
+
+.cube-spinner {
+  animation: spin-cube 14s ease-in-out infinite;
+  transform-style: preserve-3d;
+  transform-origin: -50% 50px; /* Adjust this origin for positioning */
+  position: absolute;
+  inset: 0;
+}
+
+.cube-spinner div {
+  position: absolute;
+  overflow: visible;
+  inset: 0;
+  height: 100px; /* Updated height */
+  text-align: center;
+  background: linear-gradient(45deg, #d8b4fe, #c4b5fd 30%, #a78bfa 60%, #8b5cf6 90%);
+  -webkit-background-clip: text;
+  -moz-background-clip: text; /* Firefox */
+  background-clip: text; /* Standard */
+  -webkit-text-fill-color: transparent;
+}
+
+.face-1 {
+  transform: translateZ(50px); /* Updated translateZ value to half the new height */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden; /* Standard */
+}
+
+.face-2 {
+  transform: rotateX(120deg) translateZ(50px); /* Updated translateZ value */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden; /* Standard */
+}
+
+.face-3 {
+  transform: rotateX(240deg) translateZ(50px); /* Updated translateZ value */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden; /* Standard */
+}
+
+@keyframes spin-cube {
+  0%, 100% {
+    transform: rotateX(0deg);
+  }
+  0%, 25% {
+    transform: rotateX(0deg);
+  }
+  33%, 58% {
+    transform: rotateX(120deg);
+  }
+  66%, 92% {
+    transform: rotateX(240deg);
+  }
+  100% {
+    transform: rotateX(1turn);
+  }
+}
+
+@keyframes left-float-in-out {
+  0% {
+    transform: translateY(-20%) translateX(-20%) rotate(0deg);
+  }
+  50% {
+    transform: translateY(5%) translateX(0) rotate(45deg);
+  }
+  100% {
+    transform: translateY(-20%) translateX(-20%) rotate(0deg);
+  }
+}
+
+@keyframes right-float-in-out {
+  0% {
+    transform: translateY(20%) translateX(20%) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5%) translateX(0) rotate(-45deg);
+  }
+  100% {
+    transform: translateY(20%) translateX(20%) rotate(0deg);
+  }
+}
+
+.animate-left-float-in-out {
+  animation: left-float-in-out 15s ease-in-out infinite; 
+}
+
+.animate-right-float-in-out {
+  animation: right-float-in-out 15s ease-in-out infinite; 
+}
