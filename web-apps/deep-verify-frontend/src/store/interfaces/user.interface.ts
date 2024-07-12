@@ -1,12 +1,26 @@
 export enum Role {
-  User = 'user',
-  Admin = 'admin',
+  User = "user",
+  Student = "Student",
+  Admin = "admin",
 }
 
 export interface UserSignupProps {
   email: string;
   password: string;
   cpassword: string;
+}
+
+export interface ChangePasswordProps {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+  token: string;
+}
+
+export interface ResetPasswordProps {
+  password: string;
+  confirmPassword: string;
+  token?: string;
 }
 
 export interface UserStateProps {
@@ -39,27 +53,27 @@ export interface UserStateProps {
 }
 
 export interface LoginProps {
-    email: string;
-    password: string;
-  }
+  email: string;
+  password: string;
+}
 
 export interface AuthProps {
-    email?: string;
-    password?: string;
-  }
-  
-  export interface ErrorProps {
-    msg: string;
-    Id: string;
-  }
+  email?: string;
+  password?: string;
+}
 
-  export interface UserProps {
-    _id?: any;
-    firstname: string;
-    lastname: string;
-    password?: string;
-    email: string;
-    profileImage?: string;
-    isVerified: boolean;
-    roles: Role[];
-  }
+export interface ErrorProps {
+  msg: string;
+  Id: string;
+}
+
+export interface UserProps {
+  _id?: any;
+  firstname: string;
+  lastname: string;
+  password?: string;
+  email: string;
+  profileImage?: string;
+  isVerified: boolean;
+  roles: Role[];
+}
