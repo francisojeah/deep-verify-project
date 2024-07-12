@@ -1,4 +1,4 @@
-import { Suspense, createContext, lazy } from "react";
+import { Suspense, createContext, lazy, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "flowbite";
 import PageLoader from "./components/PageLoader";
@@ -7,10 +7,13 @@ import { persistStore } from "redux-persist";
 import { store } from "./store/store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import { DEV_MODE } from "./global/frontend.settings";
 import { AppContextType } from "./global/contexts";
+import { useTranslation } from "react-i18next";
 import { HelmetProvider } from "react-helmet-async";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 const { VITE_REACT_APP_GOOGLE_CLIENT_ID } = import.meta.env;
+
 type Props = {
   assetMap?: {
     "styles.css": string;
@@ -35,20 +38,42 @@ type Props = {
 export const AppContext = createContext<AppContextType>(null);
 
 const App: React.FC<Props> = ({ assetMap }) => {
+  const { i18n } = useTranslation();
+
+  const changeI18nLanguageToClientPreferred = async () => {
+    if (i18n.language != assetMap?.clientFirstAcceptLanguage)
+      await i18n.changeLanguage(assetMap?.clientFirstAcceptLanguage);
+  };
+  useEffect(() => {
+    //check if assetMap sent in production mode; if not, redirect to a proper ssr endpoint.
+
+    if (!DEV_MODE) {
+      //attempt to change language here to locale
+      changeI18nLanguageToClientPreferred();
+      if (!assetMap) {
+        window.location.href = "/"; //simulate a mouse click
+      }
+    }
+  });
+
   const appBody = () => {
     //can be used at DEV time and PROD time
 
     //Default settings on dev mode
     let baseUrl = "/";
-    // let title = "Hello World";
+    let title = "Hello World";
 
     if (assetMap) {
       //prod mode. Sent by ssr endpoint.
       baseUrl = assetMap.baseUrl;
-      // title = assetMap.initialContentMap.title!;
+      title = assetMap.initialContentMap.title!;
     }
-   
+    console.log(title);
+    console.log(baseUrl);
+    //console.log(`assetMap in AppWithNavDemo = ${JSON.stringify(assetMap)}`)
+
     let persister = persistStore(store);
+
     return (
       <AppContext.Provider value={{ baseUrl }}>
         <GoogleOAuthProvider clientId={VITE_REACT_APP_GOOGLE_CLIENT_ID}>
@@ -57,7 +82,75 @@ const App: React.FC<Props> = ({ assetMap }) => {
               <HelmetProvider>
                 <Router>
                   <Routes>
-                    
+                    <Route
+                      path="/"
+                      element={
+                        <Suspense fallback={<PageLoader />}>
+                          {React.createElement(
+                            lazy(() => import("../src/pages/Home/LandingPage"))
+                          )}
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/home"
+                      element={
+                        <Suspense fallback={<PageLoader />}>
+                          {React.createElement(
+                            lazy(() => import("../src/pages/Home/HomePage"))
+                          )}
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/signup"
+                      element={
+                        <Suspense fallback={<PageLoader />}>
+                          {React.createElement(
+                            lazy(() => import("../src/pages/Auth/SignUp"))
+                          )}
+                        </Suspense>
+                      }
+                    /><Route
+                    path="/login"
+                    element={
+                      <Suspense fallback={<PageLoader />}>
+                        {React.createElement(
+                          lazy(() => import("../src/pages/Auth/Login"))
+                        )}
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/forgot-password"
+                    element={
+                      <Suspense fallback={<PageLoader />}>
+                        {React.createElement(
+                          lazy(() => import("../src/pages/Auth/ForgotPassword"))
+                        )}
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/reset-password"
+                    element={
+                      <Suspense fallback={<PageLoader />}>
+                        {React.createElement(
+                          lazy(() => import("../src/pages/Auth/ResetPassword"))
+                        )}
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                      path="/about"
+                      element={
+                        <Suspense fallback={<PageLoader />}>
+                          {React.createElement(
+                            lazy(() => import("../src/pages/GeneralPages/About"))
+                          )}
+                        </Suspense>
+                      }
+                    />
                     <Route
                       path="*"
                       element={
