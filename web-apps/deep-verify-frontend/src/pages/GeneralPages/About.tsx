@@ -5,7 +5,6 @@ import MetaTags from "../../components/MetaTags";
 import PageLayout from "../../components/PageLayout";
 import { FiArrowUpRight } from "react-icons/fi";
 import { Avatar } from "flowbite-react";
-import { FaUser } from "react-icons/fa";
 
 const AboutPage = () => {
   return (
