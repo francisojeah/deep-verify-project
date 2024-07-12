@@ -11,11 +11,17 @@ import {
   REGISTER,
   REHYDRATE,
 } from "redux-persist";
+import menuSlice from "./slices/menuSlice";
+import userSlice from "./slices/userSlice";
 
 export type RootState = {
+  menu: any;
+  user: any;
 };
 
 const rootReducer = combineReducers<any>({
+  menu: menuSlice,
+  user: userSlice,
   [appApi.reducerPath]: appApi.reducer,
 });
 
