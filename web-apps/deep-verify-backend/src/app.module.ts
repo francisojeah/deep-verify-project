@@ -21,10 +21,10 @@ import { MailModule } from './modules/users/mail/mail.module';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    // ServeStaticModule.forRoot({
-    //   rootPath: join(__dirname, '../../..', 'deep-verify-frontend', 'dist'),
-    //   exclude: ['/api*'],
-    // }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../../..', 'deep-verify-frontend', 'dist'),
+      exclude: ['/api*'],
+    }),
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({

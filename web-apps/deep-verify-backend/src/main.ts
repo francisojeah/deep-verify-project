@@ -54,7 +54,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  // app.setGlobalPrefix('/backend');
+  app.setGlobalPrefix('/backend');
 
   app.enableVersioning({
     type: VersioningType.URI,
@@ -66,7 +66,10 @@ async function bootstrap() {
     this.logger.error(error);
   }
 
-  await app.listen(process.env.APP_SERVER_LISTEN_PORT, '0.0.0.0');
+  await app.listen(
+    process.env.APP_SERVER_LISTEN_PORT,
+    process.env.APP_SERVER_LISTEN_IP,
+  );
 
   console.log(`Application is running on: ${await app.getUrl()}`);
 }

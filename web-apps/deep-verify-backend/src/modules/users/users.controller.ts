@@ -4,7 +4,6 @@ import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './users.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
-import { MailService } from '../mail/mail.service';
 import { ResetPasswordDto } from './dto/create-user.dto';
 import { Role, UserProps } from './interfaces/user.interfaces';
 import HttpStatusCodes from '../../configurations/HttpStatusCodes';
@@ -26,6 +25,7 @@ import {
   HttpStatus,
   Request,
   UnauthorizedException,
+  Version,
 } from '@nestjs/common';
 import {
   ChangePasswordDto,
@@ -34,6 +34,7 @@ import {
   UpdateUserDto,
 } from './dto/create-user.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { MailService } from './mail/mail.service';
 
 @ApiTags('user')
 @Controller('user')
@@ -44,6 +45,7 @@ export class UserController {
     private configService: ConfigService,
   ) {}
 
+  @Version('1')
   @Get()
   // @UseGuards(VerifyLogin)
   async user(@Res() res: any, @Req() req: any) {
@@ -60,6 +62,7 @@ export class UserController {
   //   return this.userService.googleLogin(req)
   // }
 
+  @Version('1')
   @Put()
   // @UseGuards(VerifyLogin)
   async updateUser(
@@ -71,6 +74,7 @@ export class UserController {
     return res.status(200).send({ updated: true });
   }
 
+  @Version('1')
   @Post('register')
   async userRegister(
     @Body() body: CreateUserDto,
@@ -99,6 +103,7 @@ export class UserController {
     }
   }
 
+  @Version('1')
   @Post('login')
   async loginUser(
     @Body() body: LoginUserDto,
@@ -136,6 +141,7 @@ export class UserController {
     }
   }
   
+  @Version('1')
   @Post('login-with-google')
   async loginWithGoogle(@Body() body: { accessToken: string }, @Res() res: any): Promise<any> {
     try {
@@ -147,6 +153,7 @@ export class UserController {
   }
 
 
+  @Version('1')
   @Post('request-password')
   async requestPassword(
     @Body() body: ResetPasswordDto,
@@ -169,6 +176,7 @@ export class UserController {
     }
   }
 
+  @Version('1')
   @Get('verify-account/:token')
   async verifyAccount(@Param('token') token: string, @Res() res: any) {
     try {
@@ -200,6 +208,7 @@ export class UserController {
     }
   }
 
+  @Version('1')
   @Get('reset-password')
   async resetPassword(@Query('code') code: string, @Res() res: any) {
     try {
@@ -239,6 +248,7 @@ export class UserController {
     }
   }
 
+  @Version('1')
   @Post('change-password')
   async changePassword(
     @Body() body: ChangePasswordDto,

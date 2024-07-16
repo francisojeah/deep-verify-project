@@ -4,13 +4,13 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from './schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
-import { MailService } from '../mail/mail.service';
 import HttpStatusCodes from 'src/configurations/HttpStatusCodes';
 import { PasswordRecover } from './schemas/passwordRecover.schema';
 import { AuthProps, Role, UserProps } from './interfaces/user.interfaces';
 import { UserEmailVerification } from './schemas/userEmailVerification.schema';
 import { CreateUserDto, LoginUserDto } from './dto/create-user.dto';
 import axios from 'axios';
+import { MailService } from './mail/mail.service';
 
 const jwt = require('jsonwebtoken');
 const saltOrRounds = 10;
@@ -356,11 +356,11 @@ export class UserService {
         statusCode: HttpStatusCodes.PERMANENT_REDIRECT,
       };
 
-    if (user.isBanned)
-      return {
-        msg: "You're not authorized to make this request",
-        statusCode: HttpStatusCodes.UNAUTHORIZED,
-      };
+    // if (user.isBanned)
+    //   return {
+    //     msg: "You're not authorized to make this request",
+    //     statusCode: HttpStatusCodes.UNAUTHORIZED,
+    //   };
 
     return { userId: user.id, code: pwdData.code };
   }

@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer';
-import { AuthProps, UserProps } from '../users/interfaces/user.interfaces';
+import { UserProps } from '../interfaces/user.interfaces';
 require('dotenv').config();
 
 const {
