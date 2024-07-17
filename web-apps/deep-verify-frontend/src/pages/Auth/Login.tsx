@@ -15,7 +15,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import {
   login,
-  loginWithGoogle,
   resetRegErrMsg,
   resetRegistered,
   resetUser,
@@ -23,9 +22,6 @@ import {
 import { FcGoogle } from "react-icons/fc";
 import UserRegisterSuccessModal from "../../components/UserRegisterSuccessModal";
 import MetaTags from "../../components/MetaTags";
-import {
-  useGoogleLogin,
-} from "@react-oauth/google";
 
 const Login = () => {
   const [openSignupModal, setOpenSignupModal] = useState(false);

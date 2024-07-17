@@ -11,8 +11,8 @@ import { DEV_MODE } from "./global/frontend.settings";
 import { AppContextType } from "./global/contexts";
 import { useTranslation } from "react-i18next";
 import { HelmetProvider } from "react-helmet-async";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-const { VITE_REACT_APP_GOOGLE_CLIENT_ID } = import.meta.env;
+// import { GoogleOAuthProvider } from "@react-oauth/google";
+// const { VITE_REACT_APP_GOOGLE_CLIENT_ID } = import.meta.env;
 
 type Props = {
   assetMap?: {
@@ -76,7 +76,7 @@ const App: React.FC<Props> = ({ assetMap }) => {
 
     return (
       <AppContext.Provider value={{ baseUrl }}>
-        <GoogleOAuthProvider clientId={VITE_REACT_APP_GOOGLE_CLIENT_ID}>
+        {/* <GoogleOAuthProvider clientId={VITE_REACT_APP_GOOGLE_CLIENT_ID}> */}
           <Provider store={store}>
             <PersistGate loading={null} persistor={persister}>
               <HelmetProvider>
@@ -216,7 +216,7 @@ const App: React.FC<Props> = ({ assetMap }) => {
               </HelmetProvider>
             </PersistGate>
           </Provider>
-        </GoogleOAuthProvider>
+        {/* </GoogleOAuthProvider> */}
       </AppContext.Provider>
     );
   };

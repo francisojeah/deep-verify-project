@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDropzone } from 'react-dropzone';
@@ -26,7 +26,6 @@ type MediaType = typeof mediaTypes[number];
 
 const UserDashboard: React.FC = () => {
   const userSlice = useSelector<RootState, UserStateProps>((state) => state.user);
-  const dispatch = useDispatch<any>();
   const navigate = useNavigate();
 
   const [file, setFile] = useState<File | null>(null);

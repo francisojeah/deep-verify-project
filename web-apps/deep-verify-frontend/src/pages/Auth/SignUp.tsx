@@ -16,14 +16,12 @@ import { RootState } from "../../store/store";
 import { FcGoogle } from "react-icons/fc";
 import UserRegisterSuccessModal from "../../components/UserRegisterSuccessModal";
 import {
-  loginWithGoogle,
   resetRegErrMsg,
   resetRegistered,
   resetUser,
   signupUser,
 } from "../../store/slices/userSlice";
 import MetaTags from "../../components/MetaTags";
-import { useGoogleLogin } from "@react-oauth/google";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
