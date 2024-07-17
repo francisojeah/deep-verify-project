@@ -43,18 +43,18 @@ const SignUp = () => {
     [dispatch, signupUser]
   );
 
-  const onLoginWithGoogle = useCallback((props: any) => {
-    return dispatch(loginWithGoogle(props));
-  }, []);
+  // const onLoginWithGoogle = useCallback((props: any) => {
+  //   return dispatch(loginWithGoogle(props));
+  // }, []);
 
-  const googleLogin = useGoogleLogin({
-    onSuccess: async (codeResponse) => {
-      onLoginWithGoogle({
-        accessToken: codeResponse.access_token,
-      });
-    },
-    onError: (error) => console.log("Login Failed:", error),
-  });
+  // const googleLogin = useGoogleLogin({
+  //   onSuccess: async (codeResponse) => {
+  //     onLoginWithGoogle({
+  //       accessToken: codeResponse.access_token,
+  //     });
+  //   },
+  //   onError: (error) => console.log("Login Failed:", error),
+  // });
 
   const handleClose = useCallback(() => {
     setOpenSignupModal(false);
@@ -303,7 +303,7 @@ const SignUp = () => {
                             Or
                           </p>
                           <button
-                            onClick={() => googleLogin()}
+                            // onClick={() => googleLogin()}
                             className="flex items-center bg-white border border-gray-300 shadow-md justify-center gap-4 rounded-lg px-6 py-3 text-sm font-medium text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 "
                           >
                             <FcGoogle size={20} />
