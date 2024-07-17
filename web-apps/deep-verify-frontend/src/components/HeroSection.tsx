@@ -43,7 +43,7 @@ const HeroSection = () => {
           <p className="mb-9 max-w-2xl text-base text-center leading-relaxed dark:text-zinc-400 md:text-2xl md:leading-relaxed">
             Empowering Authenticity in Media with Cutting-Egde Deepfake Detection Technology
           </p>
-          <Link to={"/login"}>
+          <Link to={"/signup"}>
             <ButtonComponent>
               Get Started
               <FiArrowUpRight />

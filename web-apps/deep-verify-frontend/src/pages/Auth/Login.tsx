@@ -79,7 +79,7 @@ const Login = () => {
 
   return (
     <ConditionalRoute
-      redirectTo="/home"
+      redirectTo="/dashboard"
       condition={
         userSlice.user &&
         userSlice.user.isVerified &&

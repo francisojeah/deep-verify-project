@@ -5,6 +5,8 @@ import MetaTags from "../../components/MetaTags";
 import PageLayout from "../../components/PageLayout";
 import { FiArrowUpRight } from "react-icons/fi";
 import { Avatar } from "flowbite-react";
+import { FaUser } from "react-icons/fa";
+
 
 const AboutPage = () => {
   return (
@@ -104,12 +106,7 @@ const AboutPage = () => {
             <div className="grid gap-8 md:grid-cols-2 mt-8">
               {/* Francis Okocha-Ojeah */}
               <div className="flex flex-col gap-6 px-6 py-12 rounded-2xl border border-neutral-300 dark:border-neutral-500">
-                <Avatar
-                  alt="Francis Okocha-Ojeah"
-                  img={"/assets/icons/profile.svg"}
-                  rounded
-                  className="rounded-full mx-auto"
-                />
+              <FaUser className="text-5xl w-full text-gray-900 dark:text-white" />
                 <p className="text-2xl font-semibold text-gray-900 dark:text-white">
                   Francis Okocha-Ojeah
                 </p>
@@ -120,12 +117,7 @@ const AboutPage = () => {
 
               {/* Prof. Kingsley Ukaoha */}
               <div className="flex flex-col gap-6 px-6 py-12 rounded-2xl border border-neutral-300 dark:border-neutral-500">
-                <Avatar
-                  alt="Prof. Kingsley Ukaoha"
-                  img={"/assets/icons/profile.svg"}
-                  rounded
-                  className="rounded-full mx-auto"
-                />
+                <FaUser className="text-5xl w-full text-gray-900 dark:text-white" />
                 <p className="text-2xl font-semibold text-gray-900 dark:text-white">
                   Prof. Kingsley Ukaoha
                 </p>

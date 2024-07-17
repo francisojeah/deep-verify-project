@@ -103,6 +103,46 @@ const App: React.FC<Props> = ({ assetMap }) => {
                       }
                     />
                     <Route
+                      path="/dashboard"
+                      element={
+                        <Suspense fallback={<PageLoader />}>
+                          {React.createElement(
+                            lazy(() => import("../src/pages/User/UserDashboard"))
+                          )}
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/game"
+                      element={
+                        <Suspense fallback={<PageLoader />}>
+                          {React.createElement(
+                            lazy(() => import("../src/pages/GeneralPages/Game"))
+                          )}
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/detection/:id"
+                      element={
+                        <Suspense fallback={<PageLoader />}>
+                          {React.createElement(
+                            lazy(() => import("../src/pages/User/DetectionDetailsPage"))
+                          )}
+                        </Suspense>
+                      }
+                    />
+                    <Route
+                      path="/history"
+                      element={
+                        <Suspense fallback={<PageLoader />}>
+                          {React.createElement(
+                            lazy(() => import("../src/pages/User/DetectionHistoryPage"))
+                          )}
+                        </Suspense>
+                      }
+                    />
+                    <Route
                       path="/signup"
                       element={
                         <Suspense fallback={<PageLoader />}>
@@ -147,6 +187,16 @@ const App: React.FC<Props> = ({ assetMap }) => {
                         <Suspense fallback={<PageLoader />}>
                           {React.createElement(
                             lazy(() => import("../src/pages/GeneralPages/About"))
+                          )}
+                        </Suspense>
+                      }
+                    />
+                     <Route
+                      path="/contact"
+                      element={
+                        <Suspense fallback={<PageLoader />}>
+                          {React.createElement(
+                            lazy(() => import("../src/pages/GeneralPages/ContactPage"))
                           )}
                         </Suspense>
                       }

@@ -8,7 +8,7 @@ type MetaTagsProps = {
 };
 
 const MetaTags = ({
-  title = "DeepVerify | Advanced Deepfake Detection Technology",
+  title = "DeepVerify | Deepfake Detection Technology",
   keywords = "DeepVerify, Deepfake Detection, AI, Machine Learning, Media Authentication, Video, Image, Audio, Detection Technology, Fake Media",
   description = "Welcome to DeepVerify, the leading platform for advanced deepfake detection. Ensure media authenticity with our state-of-the-art technology that detects deepfakes in audio, images, and videos.",
   pageUrl = window.location.href

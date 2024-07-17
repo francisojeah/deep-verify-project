@@ -10,7 +10,7 @@ const HomeBanner = () => {
           <p className="max-w-4xl font-bold lg:text-4xl md:text-3xl text-xl text-center flex">
             Explore our advanced deepfake detection technology
           </p>
-          <Link to={"/login"}>
+          <Link to={"/signup"}>
             <ButtonComponent>
               Get Started <FiArrowUpRight />
             </ButtonComponent>

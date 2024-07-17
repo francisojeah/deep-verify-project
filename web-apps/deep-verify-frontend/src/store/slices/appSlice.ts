@@ -2,7 +2,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 // Define the base query
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:3000/backend/v1",
+  // baseUrl: "http://localhost:3000/backend/v1",
+  baseUrl: "https://deep-verify-backend.onrender.com/backend/v1",
   prepareHeaders: (headers, { getState }: any) => {
     const token = getState()?.auth?.token;
 

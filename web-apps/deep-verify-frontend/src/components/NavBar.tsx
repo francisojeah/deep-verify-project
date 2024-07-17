@@ -143,26 +143,26 @@ const NavBar = () => {
               <Dropdown
                 arrowIcon={true}
                 inline
-                className="md:w-[20%]"
+                className="md:w-[20%] dark:bg-black border-neutral-300 dark:border-neutral-500"
                 label={
                   <div className="flex items-center gap-4">
                     <Avatar
                       alt="User"
-                      img={userSlice?.user?.profileImage}
+                      img={userSlice?.user?.profileImage || "/assets/icons/profile.svg"}
                       rounded
                     />
                   </div>
                 }
               >
                 <DropdownHeader>
-                  <p className="text-xs font-bold text-custom-primary-1">{`${
-                    userSlice?.user?.firstname || "Coupe"
+                  <p className="text-xs font-bold text-custom-primary">{`${
+                    userSlice?.user?.firstname || "DeepVerify"
                   } ${userSlice?.user?.lastname || "User"}`}</p>
-                  <span className="block truncate text-sm font-medium">
-                    Coupe de Escriva user
+                  <span className="block truncate text-sm font-medium dark:text-white text-black">
+                    Deep Verify user
                   </span>
                 </DropdownHeader>
-                <DropdownItem onClick={handleLogout} className="text-base">
+                <DropdownItem onClick={handleLogout} className="text-base dark:text-white text-black">
                   Sign out
                 </DropdownItem>
               </Dropdown>
@@ -173,7 +173,7 @@ const NavBar = () => {
                     <p className="text-sm">Sign in</p>
                   </div>
                 </Link>
-                <Link to={"/login"}>
+                <Link to={"/signup"}>
                   <ButtonComponent extraStyles="">
                     Get Started
                     <FiArrowUpRight />
@@ -187,14 +187,14 @@ const NavBar = () => {
           <Dropdown
             arrowIcon={false}
             inline
-            className="md:w-[35%]"
+            className="md:w-[35%] dark:bg-black border-neutral-300 dark:border-neutral-500"
             label={
               userSlice?.user?.email ? (
                 <>
                   <div className="flex items-center gap-4">
-                    <Avatar
+                  <Avatar
                       alt="User"
-                      img={userSlice?.user?.profileImage}
+                      img={userSlice?.user?.profileImage || "/assets/icons/profile.svg"}
                       rounded
                     />
                     <svg
@@ -236,24 +236,24 @@ const NavBar = () => {
             }
           >
             <DropdownHeader>
-              <p className="text-xs font-bold text-custom-primary-1">{`${
-                userSlice?.user?.firstname || "Coupe"
+              <p className="text-xs font-bold text-custom-primary">{`${
+                userSlice?.user?.firstname || "Deep Verify"
               } ${userSlice?.user?.lastname || "User"}`}</p>
-              <span className="block truncate text-sm font-medium">
-                Coupe de Escriva user
+              <span className="block truncate text-sm font-medium dark:text-white text-black">
+                Deep Verify user
               </span>
             </DropdownHeader>
             {menus.map(({ title, link }, index) => (
               <DropdownItem className="w-full" key={index}>
                 <Link className="w-full" to={`/${link}`} key={index}>
-                  <div className="flex w-full text-base">{title}</div>
+                  <div className="flex w-full text-base dark:text-white text-black">{title}</div>
                 </Link>
               </DropdownItem>
             ))}
             <DropdownDivider />
 
             {userSlice?.user?.email ? (
-              <DropdownItem onClick={handleLogout} className="text-base">
+              <DropdownItem onClick={handleLogout} className="text-base dark:text-white text-black">
                 Sign out
               </DropdownItem>
             ) : (

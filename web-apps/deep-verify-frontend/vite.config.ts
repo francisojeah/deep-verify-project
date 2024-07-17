@@ -17,12 +17,12 @@ export default defineConfig({
       "@": "/src",
     },
   },
-  server: {
-    proxy: {
-      "/backend": {
-        target: "https://deep-verify-backend.onrender.com",
-        changeOrigin: true,
-      },
-    },
-  },
+  // server: {
+  //   proxy: {
+  //     "/backend": {
+  //       target: "https://deep-verify-backend.onrender.com",
+  //       changeOrigin: true,
+  //     },
+  //   },
+  // },
 });

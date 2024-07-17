@@ -19,7 +19,7 @@ export const signupUser = createAsyncThunk<UserStateProps, UserSignupProps>(
   async (values) => {
     try {
       const { data }: any = await axios.post(
-        `${proxyAddress}/user/register`,
+        `${proxyAddress}/backend/v1/user/register`,
         values
       );
       return data;
@@ -34,7 +34,7 @@ export const login = createAsyncThunk<UserStateProps, LoginProps>(
   async (values) => {
     try {
       const { data }: any = await axios.post(
-        `${proxyAddress}/user/login`,
+        `${proxyAddress}/backend/v1/user/login`,
         values
       );
       return data;
@@ -49,7 +49,7 @@ export const loginWithGoogle = createAsyncThunk<UserStateProps, any>(
   async (values) => {
     try {
       const { data }: any = await axios.post(
-        `${proxyAddress}/user/login-with-google`,
+        `${proxyAddress}/backend/v1/user/login-with-google`,
         values
       );
       return data;
@@ -65,7 +65,7 @@ export const requestPassword = createAsyncThunk<
 >("request-password", async (values) => {
   try {
     const { data }: any = await axios.post(
-      `${proxyAddress}/backend/v1/auth/reset-password`,
+      `${proxyAddress}/backend/v1/user/reset-password`,
       values
     );
     return data;
@@ -79,7 +79,7 @@ export const changePassword = createAsyncThunk<any, ChangePasswordProps>(
   async ({token, ...values}, { rejectWithValue }) => {
     try {
       const { data }: any = await axios.post(
-        `${proxyAddress}/backend/v1/auth/change-password`,
+        `${proxyAddress}/backend/v1/user/change-password`,
         values,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -101,7 +101,7 @@ export const confirmResetPassword = createAsyncThunk<any, ResetPasswordProps>(
   async ({token, ...values}, { rejectWithValue }) => {
     try {
       const { data }: any = await axios.post(
-        `${proxyAddress}/backend/v1/auth/confirm-reset-password`,
+        `${proxyAddress}/backend/v1/user/confirm-reset-password`,
         values,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -205,6 +205,7 @@ const userSlice = createSlice({
 
     builder.addCase(signupUser.rejected, (state, action) => {
       state.isRegistering = false;
+      console.log("dd", action)
       state.errMsg = {
         msg: action.error.message,
         Id: "USER_REGISTER_ERROR",
@@ -227,6 +228,7 @@ const userSlice = createSlice({
     builder.addCase(login.rejected, (state, action) => {
       state.loggin = false;
       state.user = null;
+      console.log("dd", action)
       state.errMsg = {
         msg: action.error.message,
         Id: "LOGIN_ERROR",
