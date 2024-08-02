@@ -10,7 +10,7 @@ import { AuthProps, Role, UserProps } from './interfaces/user.interfaces';
 import { UserEmailVerification } from './schemas/userEmailVerification.schema';
 import { CreateUserDto, LoginUserDto } from './dto/create-user.dto';
 import axios from 'axios';
-import { MailService } from './mail/mail.service';
+import { MailService } from '../mail/mail.service';
 
 const jwt = require('jsonwebtoken');
 const saltOrRounds = 10;

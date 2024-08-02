@@ -34,7 +34,7 @@ import {
   UpdateUserDto,
 } from './dto/create-user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { MailService } from './mail/mail.service';
+import { MailService } from '../mail/mail.service';
 
 @ApiTags('user')
 @Controller('user')
@@ -97,9 +97,11 @@ export class UserController {
 
       return res.status(200).json({ isRegistered: true, user });
     } catch (error) {
-      return res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: error.message });
+      const errorMessage =
+        error.response?.message || error.message || 'Internal server error';
+      const errorStatus = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
+
+      return res.status(errorStatus).json({ message: errorMessage });
     }
   }
 
@@ -134,24 +136,31 @@ export class UserController {
         token: loggedUser.token,
       });
     } catch (error) {
-      console.log(error)
-      return res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: error.message });
+      const errorMessage =
+        error.response?.message || error.message || 'Internal server error';
+      const errorStatus = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
+
+      return res.status(errorStatus).json({ message: errorMessage });
     }
   }
-  
+
   @Version('1')
   @Post('login-with-google')
-  async loginWithGoogle(@Body() body: { accessToken: string }, @Res() res: any): Promise<any> {
+  async loginWithGoogle(
+    @Body() body: { accessToken: string },
+    @Res() res: any,
+  ): Promise<any> {
     try {
       const result = await this.userService.loginWithGoogle(body.accessToken);
       return res.status(HttpStatus.OK).json(result);
     } catch (error) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });
+      const errorMessage =
+        error.response?.message || error.message || 'Internal server error';
+      const errorStatus = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
+
+      return res.status(errorStatus).json({ message: errorMessage });
     }
   }
-
 
   @Version('1')
   @Post('request-password')
@@ -170,9 +179,11 @@ export class UserController {
 
       return res.status(status).send({ msg, passwordRequested: true, email });
     } catch (error) {
-      return res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: error.message });
+      const errorMessage =
+        error.response?.message || error.message || 'Internal server error';
+      const errorStatus = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
+
+      return res.status(errorStatus).json({ message: errorMessage });
     }
   }
 
@@ -202,9 +213,11 @@ export class UserController {
           .status(302)
           .redirect(`${this.configService.get('CLIENT_URL')}/login?msg=${msg}`);
     } catch (error) {
-      return res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: error.message });
+      const errorMessage =
+        error.response?.message || error.message || 'Internal server error';
+      const errorStatus = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
+
+      return res.status(errorStatus).json({ message: errorMessage });
     }
   }
 
@@ -242,9 +255,11 @@ export class UserController {
           `${this.configService.get('CLIENT_URL')}/recover-password?msg=${msg}`,
         );
     } catch (error) {
-      return res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: error.message });
+      const errorMessage =
+        error.response?.message || error.message || 'Internal server error';
+      const errorStatus = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
+
+      return res.status(errorStatus).json({ message: errorMessage });
     }
   }
 
@@ -266,9 +281,11 @@ export class UserController {
 
       return res.status(statusCode).send({ msg, changed: true });
     } catch (error) {
-      return res
-        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: error.message });
+      const errorMessage =
+        error.response?.message || error.message || 'Internal server error';
+      const errorStatus = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
+
+      return res.status(errorStatus).json({ message: errorMessage });
     }
   }
 }
