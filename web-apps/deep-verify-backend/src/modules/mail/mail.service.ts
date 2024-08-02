@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer';
-import { UserProps } from '../interfaces/user.interfaces';
+import { UserProps } from '../users/interfaces/user.interfaces';
 require('dotenv').config();
 
 const {
@@ -59,7 +59,7 @@ export class MailService {
   ): Promise<void> {
     const url = `${this.configService.get(
       'SERVER_URL',
-    )}/backend/user/verify-account/${emailToken}`;
+    )}/backend/v1/user/verify-account/${emailToken}`;
 
     const confirmationTemplate = {
       from: process.env.EMAIL_USER,
@@ -99,7 +99,7 @@ export class MailService {
   ): Promise<void> {
     const url = `${this.configService.get(
       'SERVER_URL',
-    )}/user/reset-password?code=${emailToken}`;
+    )}/backend/v1/user/reset-password?code=${emailToken}`;
 
     const confirmationTemplate = {
       from: process.env.EMAIL_USER,

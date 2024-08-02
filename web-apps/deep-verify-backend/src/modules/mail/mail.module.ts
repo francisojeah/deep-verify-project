@@ -27,7 +27,7 @@ const {
         }
         },
         defaults: {
-          from: `"Deep Verify" <deepverify@pau.edu.ng>`,
+          from: `"Deep Verify" <ojeahfrancis@gmail.com>`,
         },
         template: {
           dir: join(__dirname, '..', '../src/modules/mail/templates'),
