@@ -162,6 +162,12 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    setMediaPreview: (state, action) => {
+      state.mediaPreview = action.payload;
+    },
+    clearMediaPreview: (state) => {
+      state.mediaPreview = null;
+    },
     resetRegErrMsg: (state) => {
       state.errMsg = null;
     },
@@ -182,6 +188,7 @@ const userSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
       state.token = null;
+      state.mediaPreview = null;
       localStorage.removeItem("token");
     },
     resetReqdPass: (state) => ({ ...state, reqdResetPass: false }),
@@ -341,6 +348,8 @@ export const {
   resetProfileUpdated,
   resetChangedRequested,
   resetPasswordRequested,
+  setMediaPreview,
+  clearMediaPreview,
 } = userSlice.actions;
 export default userSlice.reducer;
 

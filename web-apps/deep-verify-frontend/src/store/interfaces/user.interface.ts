@@ -50,6 +50,7 @@ export interface UserStateProps {
   } | null;
   loadingUsers?: boolean;
   createdUsers?: any[] | null;
+  mediaPreview?: any;
 }
 
 export interface LoginProps {
