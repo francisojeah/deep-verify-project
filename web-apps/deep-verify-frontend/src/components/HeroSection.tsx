@@ -32,6 +32,7 @@ const HeroSection = () => {
             <span className="relative whitespace-nowrap overflow-visible w-full">
               <span className="invisible">Image Deepfakes</span>
               <div className="cube-spinner h-full">
+                <div className="face-1">Image Deepfakes</div>
                 <div className="face-2">Image Deepfakes</div>
                 <div className="face-3">Video Deepfakes</div>
               </div>
