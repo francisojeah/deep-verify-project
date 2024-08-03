@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDropzone } from 'react-dropzone';
@@ -11,6 +11,7 @@ import PageLoader from "../../components/PageLoader";
 import DashboardLayout from "../../components/DashboardLayout";
 import MetaTags from "../../components/MetaTags";
 import { IoClose } from "react-icons/io5";
+import { setMediaPreview } from '../../store/slices/userSlice';
 export interface DetectionHistory {
   _id?: string;
   id?: string;
@@ -21,12 +22,13 @@ export interface DetectionHistory {
   detectedAt: string;
 }
 
-const mediaTypes = ['image', 'audio', 'video'] as const;
+const mediaTypes = ['image', 'video'] as const;
 type MediaType = typeof mediaTypes[number];
 
 const UserDashboard: React.FC = () => {
   const userSlice = useSelector<RootState, UserStateProps>((state) => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -57,16 +59,13 @@ const UserDashboard: React.FC = () => {
       reader.readAsDataURL(acceptedFile);
     } else if (acceptedFile.type.startsWith('video/')) {
       setPreview(URL.createObjectURL(acceptedFile));
-    } else if (acceptedFile.type.startsWith('audio/')) {
-      setPreview(URL.createObjectURL(acceptedFile));
-    }
+    } 
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ 
     onDrop,
     accept: {
       'image/*': activeMediaType === 'image' ? [] : [],
-      'audio/*': activeMediaType === 'audio' ? [] : [],
       'video/*': activeMediaType === 'video' ? [] : [],
     }
   });
@@ -83,6 +82,7 @@ const UserDashboard: React.FC = () => {
       const response = await axios.post(`https://deep-verify-backend.onrender.com/backend/v1/detection/detect/${activeMediaType}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+      dispatch(setMediaPreview(file));
       navigate(`/detection/${response.data._id}`);
     } catch (error) {
       console.error('Error:', error);
@@ -158,9 +158,6 @@ const UserDashboard: React.FC = () => {
                               {activeMediaType === 'video' && (
                                 <video src={preview} className="mx-auto h-32 w-auto" controls />
                               )}
-                              {activeMediaType === 'audio' && (
-                                <audio src={preview} className="mx-auto w-full" controls />
-                              )}
                               <button
                                 type="button"
                                 onClick={handleCancelUpload}
@@ -184,7 +181,6 @@ const UserDashboard: React.FC = () => {
                               </div>
                               <p className="text-xs text-black dark:text-white opacity-70">
                                 {activeMediaType === 'image' && 'PNG, JPG, GIF up to 10MB'}
-                                {activeMediaType === 'audio' && 'MP3, WAV up to 10MB'}
                                 {activeMediaType === 'video' && 'MP4, AVI up to 50MB'}
                               </p>
                             </>
