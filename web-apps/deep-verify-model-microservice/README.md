@@ -5,12 +5,10 @@
 - [📖 Project Overview](#-project-overview)
 - [✨ Features](#-features)
 - [🛠️ Tech Stack](#️-tech-stack)
-- [📁 File Structure](#-file-structure)
-- [⚙️ Setup and Installation](#%EF%B8%8F-setup-and-installation)
+- [⚙️ Setup and Installation](#-setup-and-installation)
 - [🚀 Usage](#-usage)
 - [📚 Documentation](#-documentation)
 - [🔧 API Endpoints](#-api-endpoints)
-- [🌐 Environment Variables](#-environment-variables)
 - [🤝 Contributing](#-contributing)
 - [📜 License](#-license)
 - [🙏 Acknowledgements](#-acknowledgements)
@@ -32,37 +30,7 @@ The microservice of Deep-Verify is responsible for handling the deepfake detecti
 - **Web Framework**: FastAPI
 - **Containerization**: Docker
 - **Language**: Python
-- **Database**: MongoDB (if needed for storing results)
 - **Logging**: Custom logging utilities
-
-## 📁 File Structure
-
-deep-verify/
-├── web-apps/
-│ ├── microservice/
-│ │ ├── app/
-│ │ │ ├── api/
-│ │ │ │ ├── endpoints/
-│ │ │ │ │ └── detect.py
-│ │ │ │ ├── init.py
-│ │ │ ├── core/
-│ │ │ │ ├── config.py
-│ │ │ │ ├── security.py
-│ │ │ │ ├── init.py
-│ │ │ ├── models/
-│ │ │ │ ├── deepfake_model.py
-│ │ │ │ ├── init.py
-│ │ │ ├── services/
-│ │ │ │ ├── deepfake_service.py
-│ │ │ │ ├── init.py
-│ │ │ ├── utils/
-│ │ │ │ ├── logger.py
-│ │ │ │ ├── init.py
-│ │ │ ├── main.py
-│ │ │ └── init.py
-│ │ ├── Dockerfile
-│ │ ├── requirements.txt
-│ │ └── README.md
 
 
 ## ⚙️ Setup and Installation
@@ -70,7 +38,7 @@ deep-verify/
 1. **Navigate to the microservice directory:**
 
 ```
-cd deep-verify/web-apps/microservice
+cd deep-verify/web-apps/deep-verify-model-microservice
 ```
 
 2. **Install dependencies:**
@@ -79,25 +47,16 @@ cd deep-verify/web-apps/microservice
 pip install -r requirements.txt
 ```
 
-3. **Configure environment variables:**
-
-Create a .env file in the root of the microservice project and add your necessary environment variables:
-
-```
-MONGODB_URI=your-mongodb-uri
-SECRET_KEY=your-secret-key
-```
-
-4. **Build the Docker image:**
+3. **Build the Docker image:**
 
 ```
 docker build -t deep-verify-microservice .
 ```
 
-5. **Run the Docker container:**
+4. **Run the Docker container:**
 
 ```
-docker run -d --name deep-verify-microservice -p 8000:8000 --env-file .env deep-verify-microservice
+docker run -d --name deep-verify-microservice -p 8000:8000
 ```
 
 ## 🚀 Usage
@@ -117,7 +76,7 @@ docker build -t deep-verify-microservice .
 3. **Run the Docker container:**
 
 ```
-docker run -d --name deep-verify-microservice -p 8000:8000 --env-file .env deep-verify-microservice
+docker run -d --name deep-verify-microservice -p 8000:8000
 ```
 
 ## 📚 Documentation
@@ -133,14 +92,6 @@ docker run -d --name deep-verify-microservice -p 8000:8000 --env-file .env deep-
     - Request Body: {"audio": "base64_encoded_audio"}
     - Response: {"result": "fake"}
 
-## 🌐 Environment Variables
-
-Create a .env file in the root directory of your project and add the following environment variables:
-
-```
-MONGODB_URI=your-mongodb-uri
-SECRET_KEY=your-secret-key
-```
 
 ## 📜 License
 
