@@ -1,6 +1,6 @@
-# 🛠️ Deep-Verify Microservice
+# 🛠️ DeepVerify Microservice
 
-## 📋 Table of 
+## 📋 Table of Contents
 
 - [📖 Project Overview](#-project-overview)
 - [✨ Features](#-features)
@@ -15,15 +15,16 @@
 
 ## 📖 Project Overview
 
-The microservice of Deep-Verify is responsible for handling the deepfake detection algorithms. Built with FastAPI, it offers a high-performance, asynchronous framework for running detection services and integrating them into the main application.
+DeepVerify's microservice is dedicated to the advanced detection of deepfakes in political media. Utilizing FastAPI, this microservice offers high-performance, asynchronous capabilities to integrate and deploy sophisticated detection algorithms for images and videos.
 
 ## ✨ Features
 
-- **FastAPI Framework**: High-performance, asynchronous web framework.
-- **Dockerized Deployment**: Easy to deploy using Docker.
-- **Modular Design**: Organized codebase for easy extension and maintenance.
-- **API Endpoints**: Dedicated endpoints for deepfake detection.
-- **Logging**: Centralized logging mechanism for monitoring and debugging.
+- **Advanced Detection Algorithms**: Integrates state-of-the-art models for image and video analysis.
+- **FastAPI Framework**: Efficient and asynchronous web framework for optimal performance.
+- **Dockerized Deployment**: Simplified deployment and scaling with Docker.
+- **Modular Design**: Structured codebase for scalability and maintainability.
+- **Comprehensive API Endpoints**: Tailored endpoints for deepfake detection in images and videos.
+- **Robust Logging**: Centralized logging for monitoring, debugging, and performance analysis.
 
 ## 🛠️ Tech Stack
 
@@ -31,67 +32,73 @@ The microservice of Deep-Verify is responsible for handling the deepfake detecti
 - **Containerization**: Docker
 - **Language**: Python
 - **Logging**: Custom logging utilities
-
+- **Model Frameworks**: TensorFlow, PyTorch
 
 ## ⚙️ Setup and Installation
 
 1. **Navigate to the microservice directory:**
 
-```
-cd deep-verify/web-apps/deep-verify-model-microservice
-```
+   ```bash
+   cd deep-verify/web-apps/deep-verify-model-microservice
+   ```
 
 2. **Install dependencies:**
 
-```
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 3. **Build the Docker image:**
 
-```
-docker build -t deep-verify-microservice .
-```
+   ```bash
+   docker build -t deep-verify-microservice .
+   ```
 
 4. **Run the Docker container:**
 
-```
-docker run -d --name deep-verify-microservice -p 8000:8000
-```
+   ```bash
+   docker run -d --name deep-verify-microservice -p 8000:8000 deep-verify-microservice
+   ```
 
 ## 🚀 Usage
 
 1. **Run the app in development mode:**
 
-```
-uvicorn app.main:app --reload
-```
+   ```bash
+   uvicorn app.main:app --reload
+   ```
 
 2. **Build the Docker image:**
 
-```
-docker build -t deep-verify-microservice .
-```
+   ```bash
+   docker build -t deep-verify-microservice .
+   ```
 
 3. **Run the Docker container:**
 
-```
-docker run -d --name deep-verify-microservice -p 8000:8000
-```
+   ```bash
+   docker run -d --name deep-verify-microservice -p 8000:8000 deep-verify-microservice
+   ```
 
 ## 📚 Documentation
 
 - FastAPI: <https://fastapi.tiangolo.com/>
 - Docker: <https://docs.docker.com/>
 - Uvicorn: <https://www.uvicorn.org/>
+- TensorFlow: <https://www.tensorflow.org/>
+- PyTorch: <https://pytorch.org/>
 
 ## 🔧 API Endpoints
 
-- POST /api/v1/detect
-    - Endpoint for detecting deepfakes.
-    - Request Body: {"audio": "base64_encoded_audio"}
-    - Response: {"result": "fake"}
+- **POST /api/v1/detect/image**
+  - **Description**: Endpoint for detecting deepfakes in images.
+  - **Request Body**: `{"image": "base64_encoded_image"}`
+  - **Response**: `{"isDeepfake": true/false, "confidence": float}`
 
+- **POST /api/v1/detect/video**
+  - **Description**: Endpoint for detecting deepfakes in videos.
+  - **Request Body**: `{"video": "base64_encoded_video"}`
+  - **Response**: `{"isDeepfake": true/false, "confidence": float}`
 
 ## 📜 License
 
@@ -99,4 +106,4 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 ## 🙏 Acknowledgements
 
-Special thanks to all the contributors who made this project possible.
+Special thanks to all contributors and supporters who made this project possible, including the development team and advisors.
