@@ -40,6 +40,18 @@ async function bootstrap() {
     }),
   });
 
+  app.enableCors();
+
+  app.setGlobalPrefix("/backend");
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
+
+  
+  // app.enableCors({ origin: [allowed] });
+
+  app.useGlobalPipes(new ValidationPipe());
+
   const swaggerConfig = new DocumentBuilder()
     .setTitle(process.env.APP_NAME)
     .setDescription(process.env.APP_DESCRIPTION)
@@ -49,19 +61,12 @@ async function bootstrap() {
     ignoreGlobalPrefix: false,
   });
 
-  // app.enableCors({ origin: [allowed] });
-  app.enableCors();
-
-  app.useGlobalPipes(new ValidationPipe());
-
-  app.setGlobalPrefix('/backend');
-
-  app.enableVersioning({
-    type: VersioningType.URI,
-  });
-
   try {
-    SwaggerModule.setup('/api', app, document, {});
+    SwaggerModule.setup('/api', app, document, {
+      swaggerOptions: {
+        baseUrl: '/backend/v1',
+      },
+    });
   } catch (error) {
     this.logger.error(error);
   }
