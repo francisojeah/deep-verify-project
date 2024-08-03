@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import {
+  FaFile,
+  FaPhotoVideo,
+  FaClock,
+  FaShieldAlt,
+  FaChartBar,
+} from "react-icons/fa";
 import axios from "axios";
 import DashboardLayout from "../../components/DashboardLayout";
 import MetaTags from "../../components/MetaTags";
 import PageLoader from "../../components/PageLoader";
+import { useDispatch, useSelector } from "react-redux";
+import { UserStateProps } from "../../store/interfaces/user.interface";
+import { RootState } from "../../store/store";
+import DoughnutChart from "../../components/DoughnutChart";
 
 interface DetectionDetails {
   id: string;
@@ -18,7 +29,12 @@ const DetectionDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [detectionDetails, setDetectionDetails] =
     useState<DetectionDetails | null>(null);
+  const [mediaPreview, setMediaPreview] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const userSlice = useSelector<RootState, UserStateProps>(
+    (state) => state.user
+  );
 
   useEffect(() => {
     const fetchDetectionDetails = async () => {
@@ -33,79 +49,179 @@ const DetectionDetailsPage: React.FC = () => {
     };
 
     fetchDetectionDetails();
-  }, [id]);
+    return () => {
+      setMediaPreview(userSlice?.mediaPreview);
+      // dispatch(clearMediaPreview());
+    };
+  }, [id, dispatch]);
 
+  const renderMediaPreview = () => {
+    if (!mediaPreview) return null;
+
+    const borderColor = detectionDetails?.isDeepfake
+      ? "border-red-500"
+      : "border-green-500";
+
+    if (mediaPreview?.type?.startsWith("image")) {
+      return (
+        <div
+          className={`relative w-fit border-4 ${borderColor} rounded-lg overflow-hidden`}
+        >
+          <img
+            src={"https://jgrj.law.uiowa.edu/sites/jgrj.law.uiowa.edu/files/styles/large/public/2023-04/Picture1.jpg?itok=kQ2_URLi"}
+            alt="Analyzed media"
+            // className="w-full h-auto"
+          />
+          <div className="absolute top-0 left-0 right-0 bg-red-500 text-white text-center py-2 font-bold">
+            {detectionDetails?.isDeepfake
+              ? "Potential Deepfake Detected"
+              : "No Evidence of Manipulation"}
+          </div>
+        </div>
+      );
+    // } else if (mediaPreview?.type?.startsWith("video")) {
+    }else if(true){
+
+      return (
+        <div
+          className={`relative border-4 ${borderColor} rounded-lg overflow-hidden`}
+        >
+          <video controls className="w-full h-auto">
+            <source
+              src={URL.createObjectURL(mediaPreview)}
+              type={mediaPreview.type}
+            />
+            Your browser does not support the video tag.
+          </video>
+          <div className="absolute top-0 left-0 right-0 bg-red-500 text-white text-center py-2 font-bold">
+            {detectionDetails?.isDeepfake
+              ? "Potential Manipulation Identified"
+              : "No Evidence of Manipulation"}
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+ 
+
+  if (loading) return <PageLoader />;
 
   return (
     <DashboardLayout>
-      <>
-        <MetaTags />
-        {loading ? (
-          <PageLoader />
-        ) : (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <h1 className="text-3xl font-bold text-black dark:text-white mb-6">
-              Detection Details
-            </h1>
-            <div className=" border border-neutral-300 dark:border-neutral-500 shadow overflow-hidden rounded-2xl">
-              <div className="px-4 py-5 sm:px-6">
-                <h3 className="text-lg leading-6 font-medium text-black dark:text-white">
-                  File Information
-                </h3>
+      <MetaTags />
+      <div className="max-w-7xl mx-auto px-4">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+          Detection Results
+        </h1>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {mediaPreview && (
+            <div className="md:col-span-1">
+              <div className="flex flex-col items-center border border-neutral-300 dark:border-neutral-500 rounded-xl shadow-lg overflow-hidden p-6">
+                <h2 className="flex items-start text-start text-xl w-full font-semibold text-gray-900 dark:text-white mb-4">
+                  Media Preview
+                </h2>
+                {renderMediaPreview()}
               </div>
-              <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:p-0">
-                <dl className="sm:divide-y sm:divide-gray-200 dark:divide-gray-700">
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-black dark:text-white opacity-70">
+            </div>
+          )}
+
+          <div
+            className={
+              mediaPreview ? "md:col-span-1 space-y-14" : "md:col-span-2"
+            }
+          >
+            <div className="border border-neutral-300 dark:border-neutral-500 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+              <div className="p-8">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                  <FaFile className="mr-3 text-custom-primary" />
+                  File Information
+                </h2>
+                <dl className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
+                  <div className="border border-neutral-300 dark:border-neutral-500 p-4 rounded-lg">
+                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-300 mb-1">
                       File name
                     </dt>
-                    <dd className="mt-1 text-sm text-black dark:text-white sm:mt-0 sm:col-span-2">
+                    <dd className="text-base font-semibold text-gray-900 dark:text-white truncate">
                       {detectionDetails?.fileName}
                     </dd>
                   </div>
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-black dark:text-white opacity-70">
+                  <div className="border border-neutral-300 dark:border-neutral-500 p-4 rounded-lg">
+                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-300 mb-1">
                       Media type
                     </dt>
-                    <dd className="mt-1 text-sm text-black dark:text-white sm:mt-0 sm:col-span-2">
+                    <dd className="text-base font-semibold text-gray-900 dark:text-white flex items-center">
+                      <FaPhotoVideo className="mr-2 text-custom-primary" />
                       {detectionDetails?.mediaType}
                     </dd>
                   </div>
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-black dark:text-white opacity-70">
-                      Is Deepfake
-                    </dt>
-                    <dd className="mt-1 text-sm text-black dark:text-white sm:mt-0 sm:col-span-2">
-                      <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${detectionDetails?.isDeepfake ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200" : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"}`}
-                      >
-                        {detectionDetails?.isDeepfake ? "Yes" : "No"}
-                      </span>
-                    </dd>
-                  </div>
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-black dark:text-white opacity-70">
-                      Confidence
-                    </dt>
-                    <dd className="mt-1 text-sm text-black dark:text-white sm:mt-0 sm:col-span-2">
-                      {detectionDetails?.confidence.toFixed(2)}%
-                    </dd>
-                  </div>
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-black dark:text-white opacity-70">
+                  <div className="border border-neutral-300 dark:border-neutral-500 p-4 rounded-lg sm:col-span-2">
+                    <dt className="text-sm font-medium text-gray-500 dark:text-gray-300 mb-1">
                       Detected At
                     </dt>
-                    <dd className="mt-1 text-sm text-black dark:text-white sm:mt-0 sm:col-span-2">
-                      {new Date(detectionDetails?.detectedAt|| "").toLocaleString()}
+                    <dd className="text-base font-semibold text-gray-900 dark:text-white flex items-center">
+                      <FaClock className="mr-2 text-custom-primary" />
+                      {new Date(
+                        detectionDetails?.detectedAt || ""
+                      ).toLocaleString()}
                     </dd>
                   </div>
-                  {/* Add any additional details you want to display */}
                 </dl>
               </div>
             </div>
+
+            <div className="border border-neutral-300 dark:border-neutral-500 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+              <div className="p-8">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                  <FaShieldAlt className="mr-3 text-custom-primary" />
+                  Analysis Results
+                </h2>
+                <div className="flex  w-full gap-10">
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Deepfake Detection
+                    </p>
+                    <div className="mt-1 flex items-center">
+                      <span
+                        className={`px-4 py-2 text-base font-bold rounded-full ${
+                          detectionDetails?.isDeepfake
+                            ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                            : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                        }`}
+                      >
+                        {detectionDetails?.isDeepfake
+                          ? "Deepfake Detected"
+                          : "No Deepfake Detected"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex gap-8">
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+                        <FaChartBar className="mr-2 text-custom-primary" />
+                        Confidence
+                      </p>
+                      <p className="mt-2 py-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
+                        {detectionDetails?.confidence.toFixed(2)}%
+                      </p>
+                    </div>
+                    {detectionDetails?.confidence && (
+                      <DoughnutChart
+                        percentage={parseFloat(
+                          detectionDetails.confidence.toFixed(2)
+                        )}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
-      </>
+        </div>
+      </div>
     </DashboardLayout>
   );
 };
