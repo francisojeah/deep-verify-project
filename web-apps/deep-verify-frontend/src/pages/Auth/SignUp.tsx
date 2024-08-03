@@ -105,7 +105,7 @@ const SignUp = () => {
         />
         <div className="flex justify-center items-center h-screen w-full px-4">
           
-            <div className="max-w-xl w-full flex justify-center">
+            <div className="max-w-xl w-full flex justify-center items-center rounded-2xl border border-neutral-300 dark:border-neutral-500">
             <div className="flex w-full  justify-center">
               <div className="flex flex-col justify-center w-full gap-8 p-8 text-black dark:text-white">
                 <div className="flex w-full justify-between items-center">
