@@ -19,7 +19,9 @@ const Footer: React.FC = () => {
             Deep Verify
           </p>
         </Link>
-            <p className="mt-2 text-sm text-black dark:text-white opacity-70">Empowering Authenticity in Media with <br className='hidden md:flex'/>Cutting-Egde Deepfake Detection Technology</p>
+            <p className="mt-2 text-sm text-black dark:text-white opacity-70">
+            Safeguarding Political Integrity with Advanced Deepfake Detection Technology
+              </p>
           </div>
           <div className="flex justify-between gap-10">
             <a

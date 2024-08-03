@@ -6,7 +6,6 @@ import PageLayout from "../../components/PageLayout";
 import { FiArrowUpRight } from "react-icons/fi";
 import { FaUser } from "react-icons/fa";
 
-
 const AboutPage = () => {
   return (
     <PageLayout>
@@ -16,13 +15,12 @@ const AboutPage = () => {
           {/* Introduction Section */}
           <div className="text-center flex flex-col mb-12 gap-8">
             <p className="text-center font-bold dark:text-white text-4xl leading-tight lg:text-7xl">
-              Empowering{" "}
-              <span className="text-custom-primary">Authenticity</span> in
-              Digital Media
+              Ensuring <span className="text-custom-primary">Trust</span> in
+              Political Media
             </p>
             <p className="mt-4 text-xl lg:text-2xl leading-relaxed text-black dark:text-white opacity-70">
-              Explore who we are, our values, philosophy, and our vision for the
-              future
+              Discover who we are, our mission, and our commitment to preserving
+              media integrity in the political sphere.
             </p>
           </div>
 
@@ -34,11 +32,10 @@ const AboutPage = () => {
               Our <span className="text-custom-primary">Vision</span>
             </p>
             <p className="mt-4 md:text-lg leading-relaxed text-black dark:text-white opacity-70">
-              At DeepVerify, our vision is to create a digital landscape where
-              individuals and organizations can trust the media they consume,
-              free from manipulation and deception. Our ultimate goal is to set
-              the standard for authenticity verification across digital
-              platforms globally.
+              At DeepVerify, we envision a world where political media is free
+              from manipulation, ensuring that citizens can make informed
+              decisions based on genuine information. Our goal is to set a new
+              standard for media authenticity in the political landscape.
             </p>
           </div>
 
@@ -50,11 +47,10 @@ const AboutPage = () => {
               Our <span className="text-custom-primary">Mission</span>
             </p>
             <p className="mt-4 md:text-lg leading-relaxed text-black dark:text-white opacity-70">
-              Our mission is to empower individuals and businesses with the
-              tools and knowledge to detect and mitigate deepfake threats
-              effectively. Through cutting-edge technology and relentless
-              innovation, we're committed to equipping our users with the means
-              to distinguish real from fake in audio, images, and videos.
+              Our mission is to empower journalists, political analysts, and the
+              public with robust tools to detect and combat deepfakes. Through
+              innovative AI technology and dedicated research, we strive to
+              safeguard the integrity of political discourse.
             </p>
           </div>
 
@@ -68,30 +64,29 @@ const AboutPage = () => {
             <div className="grid gap-8 sm:grid-cols-1 lg:grid-cols-3">
               <div className="p-6 rounded-2xl transition-transform transform hover:scale-105 border border-neutral-300 dark:border-neutral-500">
                 <p className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
-                  Trust and Integrity
+                  Integrity and Transparency
                 </p>
                 <p className="text-black dark:text-white opacity-70">
-                  We uphold the highest standards of trustworthiness and
-                  integrity in all our endeavors.
+                  We are committed to maintaining the highest standards of
+                  honesty and openness in our technology and practices.
                 </p>
               </div>
               <div className="p-6 rounded-2xl transition-transform transform hover:scale-105 border border-neutral-300 dark:border-neutral-500">
                 <p className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
-                  Innovation and Security
+                  Innovation and Excellence
                 </p>
                 <p className="text-black dark:text-white opacity-70">
-                  We continuously innovate to stay ahead of evolving deepfake
-                  technologies, ensuring robust security for our users.
+                  We continually advance our technology to stay ahead of
+                  deepfake tactics, ensuring top-notch performance and accuracy.
                 </p>
               </div>
               <div className="p-6 rounded-2xl transition-transform transform hover:scale-105 border border-neutral-300 dark:border-neutral-500">
                 <p className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
-                  User Empowerment
+                  Empowerment and Education
                 </p>
                 <p className="text-black dark:text-white opacity-70">
-                  We believe in democratizing access to deepfake detection
-                  tools, empowering users to protect themselves and their
-                  communities.
+                  We are dedicated to providing tools and knowledge that empower
+                  users to effectively detect and respond to media manipulation.
                 </p>
               </div>
             </div>
@@ -105,7 +100,7 @@ const AboutPage = () => {
             <div className="grid gap-8 md:grid-cols-2 mt-8">
               {/* Francis Okocha-Ojeah */}
               <div className="flex flex-col gap-6 px-6 py-12 rounded-2xl border border-neutral-300 dark:border-neutral-500">
-              <FaUser className="text-5xl w-full text-gray-900 dark:text-white" />
+                <FaUser className="text-5xl w-full text-gray-900 dark:text-white" />
                 <p className="text-2xl font-semibold text-gray-900 dark:text-white">
                   Francis Okocha-Ojeah
                 </p>
@@ -133,13 +128,13 @@ const AboutPage = () => {
               Project <span className="text-custom-primary">Context</span>
             </p>
             <p className="mt-4 md:text-lg leading-relaxed text-black dark:text-white opacity-70">
-              DeepVerify is a final year project by Francis Okocha-Ojeah as a
-              Computer Science student at the School of Science and Technology,
-              Pan-Atlantic University. Under the expert guidance of Prof.
-              Kingsley Ukaoha, the project delves into advanced research and
-              development in deepfake detection technology. DeepVerify aims to
-              address the growing concerns about the authenticity of digital
-              media by using cutting-edge AI solutions.
+              DeepVerify is a final year project developed by Francis
+              Okocha-Ojeah, a Computer Science student at Pan-Atlantic
+              University. Guided by Prof. Kingsley Ukaoha, this project explores
+              advanced techniques in deepfake detection specifically for
+              political media. It aims to address challenges related to the
+              authenticity of digital content in political contexts through
+              sophisticated AI methodologies.
             </p>
           </div>
 
@@ -150,16 +145,14 @@ const AboutPage = () => {
             </p>
             <p className="mt-4 md:text-lg leading-relaxed text-black dark:text-white opacity-70">
               I would like to express my heartfelt gratitude to God for His
-              unwavering guidance and blessings throughout the development of
-              DeepVerify. Special thanks to Prof. Kingsley Ukaoha for his
-              invaluable supervision and support, which have been instrumental
-              in shaping this project. <br/><br/>I am deeply grateful to my parents and
-              siblings for their constant encouragement and unwavering belief in
-              my endeavors. The School of Science and Technology, Pan-Atlantic University, provided
-              essential resources and a conducive environment that facilitated
-              the realization of this project. Lastly, I extend my appreciation
-              to my peers and colleagues whose contributions and feedback have
-              greatly enriched this journey.
+              unwavering guidance throughout the development of DeepVerify.
+              Special thanks to Prof. Kingsley Ukaoha for his invaluable
+              supervision and support. I am deeply grateful to my family for
+              their constant encouragement and belief in my work. The School of
+              Science and Technology at Pan-Atlantic University provided
+              essential resources and a supportive environment. My peers and
+              colleagues also deserve thanks for their feedback and
+              contributions to this project.
             </p>
           </div>
 
@@ -167,7 +160,8 @@ const AboutPage = () => {
           <section className="w-full max-w-6xl mx-auto py-20 md:px-8 p-4 text-black dark:text-white text-center rounded-2xl border border-medium-purple-400 bg-medium-purple-50 dark:bg-medium-purple-950 md:dark:bg-opacity-70  relative overflow-hidden">
             <p className="text-3xl font-bold">Contact Us</p>
             <p className="mt-4 md:text-lg max-w-4xl mx-auto">
-              Have questions or feedback? Reach out to us!
+              Have questions or feedback about our deepfake detection solutions?
+              Reach out to us!
             </p>
             <div className="mt-8 flex justify-center">
               <Link to="/contact">
