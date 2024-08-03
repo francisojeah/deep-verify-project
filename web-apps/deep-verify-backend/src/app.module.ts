@@ -16,7 +16,9 @@ import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { RequestLoggerMiddleware } from '@utils/request-logger.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './modules/users/users.module';
-import { MailModule } from './modules/users/mail/mail.module';
+import { MailModule } from './modules/mail/mail.module';
+import { DetectionModule } from './modules/detections/detections.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -47,7 +49,8 @@ import { MailModule } from './modules/users/mail/mail.module';
       ],
     }),
     UserModule,
-    MailModule
+    MailModule,
+    DetectionModule,
   ],
   controllers: [AppController],
   providers: [
