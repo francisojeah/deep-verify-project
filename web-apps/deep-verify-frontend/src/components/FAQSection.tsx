@@ -17,10 +17,6 @@ export const faqData: FAQItem[] = [
     answer: "DeepVerify analyzes political images and videos using specialized AI models. The tool employs ensemble learning techniques, combining predictions from various models to enhance accuracy and identify signs of manipulation effectively.",
   },
   {
-    question: "Which models are used in DeepVerify?",
-    answer: "DeepVerify uses a combination of advanced models, including XceptionNet and EfficientNet-B4 for image analysis, and 3D ResNet and CNN-LSTM for video analysis. This ensemble approach improves the accuracy of deepfake detection.",
-  },
-  {
     question: "What types of media can DeepVerify analyze?",
     answer: "DeepVerify is designed to analyze both images and videos. It supports common formats such as JPG, JPEG, PNG for images, and MP4, AVI, MOV for videos.",
   },

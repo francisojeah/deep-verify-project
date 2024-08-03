@@ -16,7 +16,7 @@ const HomePage = () => {
     <PageLayout>
       <>
         <MetaTags />
-        <div className="w-full flex flex-col gap-16">
+        <div className="w-full flex flex-col gap-8">
           <Suspense fallback={null}>
             <HeroSection />
           </Suspense>

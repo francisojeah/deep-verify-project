@@ -4,15 +4,15 @@ import HeaderIllustration from "./HeaderIllustration";
 const FeaturesSection: React.FC = () => {
   const features = [
     {
-      title: "Image Deepfake Detection",
+      title: "Political Image Detection",
       description:
-        "Identify fake images with high precision, ensuring media authenticity.",
+        "Accurately identify deepfakes in political images.",
       icon: "/assets/icons/image-icon.svg",
     },
     {
-      title: "Video Deepfake Detection",
+      title: "Political Video Detection",
       description:
-        "Analyze and verify the integrity of video content effortlessly.",
+        "Detect deepfakes in political video content.",
       icon: "/assets/icons/video-icon.svg",
     },
   ];
@@ -30,7 +30,7 @@ const FeaturesSection: React.FC = () => {
             deepfakes across various media formats.
           </p>
         </div>
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-2 ">
           {features.map((feature, index) => (
             <div
               key={index}
