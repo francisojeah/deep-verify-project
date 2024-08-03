@@ -5,17 +5,17 @@ const HowItWorksSection: React.FC = () => {
   const steps = [
     {
       title: 'Upload Your Media',
-      description: 'Select the type of media you want to verify (audio, image, or video) and upload it to our platform.',
+      description: 'Select and upload political images or videos that you want to verify. Ensure your files are in supported formats like JPG, PNG, MP4, AVI, or MOV.',
       icon: "/assets/icons/plus-icon.svg",
     },
     {
       title: 'AI Analysis',
-      description: 'Our advanced AI models analyze the uploaded media to detect any deepfake manipulations.',
+      description: 'Our advanced ensemble of AI models will analyze the uploaded media to detect potential deepfake manipulations. This includes sophisticated image and video analysis techniques tailored for political content.',
       icon: "/assets/icons/model-icon.svg",
     },
     {
-      title: 'Get Results',
-      description: 'Receive a detailed report on the authenticity of your media, along with confidence scores.',
+      title: 'Receive Results',
+      description: 'Get a detailed report indicating whether your media contains deepfakes. The report will include a confidence score to help you understand the likelihood of manipulation.',
       icon: "/assets/icons/analysis-icon.svg",
     },
   ];

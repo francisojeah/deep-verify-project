@@ -4,12 +4,6 @@ import HeaderIllustration from "./HeaderIllustration";
 const FeaturesSection: React.FC = () => {
   const features = [
     {
-      title: "Audio Deepfake Detection",
-      description:
-        "Accurately detect manipulated audio files using advanced AI algorithms.",
-      icon: "/assets/icons/audio-icon.svg",
-    },
-    {
       title: "Image Deepfake Detection",
       description:
         "Identify fake images with high precision, ensuring media authenticity.",

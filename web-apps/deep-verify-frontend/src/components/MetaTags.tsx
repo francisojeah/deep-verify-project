@@ -8,9 +8,9 @@ type MetaTagsProps = {
 };
 
 const MetaTags = ({
-  title = "DeepVerify | Deepfake Detection Technology",
-  keywords = "DeepVerify, Deepfake Detection, AI, Machine Learning, Media Authentication, Video, Image, Audio, Detection Technology, Fake Media",
-  description = "Welcome to DeepVerify, the leading platform for advanced deepfake detection. Ensure media authenticity with our state-of-the-art technology that detects deepfakes in audio, images, and videos.",
+  title = "DeepVerify | Political Media Deepfake Detection",
+  keywords = "DeepVerify, Deepfake Detection, Political Media, AI, Machine Learning, Media Authentication, Image Analysis, Video Analysis, Political Images, Political Videos",
+  description = "DeepVerify specializes in detecting deepfakes in political media. Leverage our cutting-edge technology to analyze images and videos for authenticity and uncover potential manipulations in political content.",
   pageUrl = window.location.href
 }: MetaTagsProps) => {
   const imageUrl = `/assets/icons/logo.png`;

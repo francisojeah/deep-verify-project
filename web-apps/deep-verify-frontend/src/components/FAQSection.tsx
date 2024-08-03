@@ -10,17 +10,28 @@ export interface FAQItem {
 export const faqData: FAQItem[] = [
   {
     question: "What is DeepVerify?",
-    answer: "DeepVerify is a tool that uses advanced AI algorithms to detect deepfakes in audio, images, and videos.",
+    answer: "DeepVerify is an advanced AI tool designed to detect deepfakes in political media, including images and videos. It utilizes state-of-the-art machine learning models to identify manipulated or synthetic content.",
   },
   {
     question: "How does DeepVerify work?",
-    answer: "DeepVerify analyzes media files using AI models trained to identify signs of manipulation and synthetic content.",
+    answer: "DeepVerify analyzes political images and videos using specialized AI models. The tool employs ensemble learning techniques, combining predictions from various models to enhance accuracy and identify signs of manipulation effectively.",
   },
   {
-    question: "Can DeepVerify detect real-time deepfakes?",
-    answer: "Yes, DeepVerify can analyze and verify the integrity of real-time video streams.",
+    question: "Which models are used in DeepVerify?",
+    answer: "DeepVerify uses a combination of advanced models, including XceptionNet and EfficientNet-B4 for image analysis, and 3D ResNet and CNN-LSTM for video analysis. This ensemble approach improves the accuracy of deepfake detection.",
   },
-  // Add more FAQ items as needed
+  {
+    question: "What types of media can DeepVerify analyze?",
+    answer: "DeepVerify is designed to analyze both images and videos. It supports common formats such as JPG, JPEG, PNG for images, and MP4, AVI, MOV for videos.",
+  },
+  {
+    question: "How can I use DeepVerify?",
+    answer: "You can use DeepVerify by uploading your media files through the web application. The system will process the files and provide a report on whether they contain deepfakes, along with a confidence score indicating the likelihood of manipulation.",
+  },
+  {
+    question: "What are the benefits of using DeepVerify?",
+    answer: "DeepVerify offers robust detection capabilities specifically tailored for political media. By leveraging advanced machine learning techniques, it helps ensure the integrity of visual and video content, making it a valuable tool for journalists, researchers, and the public.",
+  },
 ];
 
 const FAQSection: React.FC = () => {

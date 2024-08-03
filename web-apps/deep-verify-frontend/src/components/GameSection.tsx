@@ -24,7 +24,7 @@ const GameSection: React.FC = () => {
             <p className="text-lg leading-relaxed text-black dark:text-white opacity-70">
               Test your skills in identifying deepfakes with our interactive
               game. Sharpen your abilities and challenge yourself to spot the
-              fakes in audio, images, and videos!
+              fakes in images, and videos!
             </p>
             <Link to={"/game"}>
           <ButtonComponent>
