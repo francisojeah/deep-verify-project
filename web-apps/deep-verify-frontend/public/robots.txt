@@ -1,0 +1,14 @@
+User-agent: *
+Disallow: /login
+Disallow: /signup
+Disallow: /dashboard/*
+Disallow: /detection/*
+Disallow: /history
+Disallow: /forgot-password
+Disallow: /reset-password
+
+# Host
+Host: https://deepverify.netlify.app
+
+# Sitemaps
+Sitemap: https://deepverify.netlify.app/sitemap.xml
