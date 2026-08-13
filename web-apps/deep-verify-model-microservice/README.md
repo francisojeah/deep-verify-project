@@ -1,109 +1,130 @@
-# 🛠️ DeepVerify Microservice
+---
+title: DeepVerify
+emoji: 🔍
+colorFrom: purple
+colorTo: gray
+sdk: gradio
+sdk_version: 6.24.0
+app_file: app.py
+pinned: false
+license: mit
+models:
+  - yermandy/deepfake-detection
+short_description: Image deepfake detection using a pre-trained CLIP ViT-L/14 detector
+---
 
-## 📋 Table of Contents
+# DeepVerify detection service
 
-- [📖 Project Overview](#-project-overview)
-- [✨ Features](#-features)
-- [🛠️ Tech Stack](#️-tech-stack)
-- [⚙️ Setup and Installation](#-setup-and-installation)
-- [🚀 Usage](#-usage)
-- [📚 Documentation](#-documentation)
-- [🔧 API Endpoints](#-api-endpoints)
-- [🤝 Contributing](#-contributing)
-- [📜 License](#-license)
-- [🙏 Acknowledgements](#-acknowledgements)
+Image deepfake detection over a **published pre-trained checkpoint**. Upload an
+image containing a face, get a calibrated-ish probability that the face was
+manipulated.
 
-## 📖 Project Overview
+## The model is not mine
 
-DeepVerify's microservice is dedicated to the advanced detection of deepfakes in political media. Utilizing FastAPI, this microservice offers high-performance, asynchronous capabilities to integrate and deploy sophisticated detection algorithms for images and videos.
+**I did not train this model.** It is
+[`yermandy/deepfake-detection`](https://huggingface.co/yermandy/deepfake-detection):
+a CLIP ViT-L/14 visual encoder with LN-tuning (parameter-efficient fine-tuning),
+trained on FaceForensics++ by Yermakov et al. and released under MIT. The weights
+are downloaded from that repository at startup and used unmodified. No training or
+fine-tuning happens in this repository.
 
-## ✨ Features
+What is mine is the service around it: face detection and cropping, the inference
+pipeline, the FastAPI service, the deployment, and the benchmark.
 
-- **Advanced Detection Algorithms**: Integrates state-of-the-art models for image and video analysis.
-- **FastAPI Framework**: Efficient and asynchronous web framework for optimal performance.
-- **Dockerized Deployment**: Simplified deployment and scaling with Docker.
-- **Modular Design**: Structured codebase for scalability and maintainability.
-- **Comprehensive API Endpoints**: Tailored endpoints for deepfake detection in images and videos.
-- **Robust Logging**: Centralized logging for monitoring, debugging, and performance analysis.
+The upstream authors report these **video-level** AUROC figures:
 
-## 🛠️ Tech Stack
+| Dataset | AUROC |
+| --- | --- |
+| DFD | 98.0% |
+| Celeb-DF-v2 | 96.6% |
+| FFIW | 91.5% |
+| DFDC | 87.2% |
 
-- **Web Framework**: FastAPI
-- **Containerization**: Docker
-- **Language**: Python
-- **Logging**: Custom logging utilities
-- **Model Frameworks**: TensorFlow, PyTorch
+Those are their numbers, not mine, and they are measured video-level by aggregating
+many frames. My own single-image measurements are in
+[`benchmarks/results/`](benchmarks/results) - see the root
+[README](../../README.md) and [LIMITATIONS.md](../../LIMITATIONS.md).
 
-## ⚙️ Setup and Installation
+## How it works
 
-1. **Navigate to the microservice directory:**
+```
+image -> YuNet face detection -> square margin crop -> CLIP preprocessing (224px)
+      -> CLIP ViT-L/14 + LN-tuning head -> softmax -> p(manipulated)
+```
 
-   ```bash
-   cd deep-verify/web-apps/deep-verify-model-microservice
-   ```
+If no face is detected the service returns **422, not a score**. The model is
+trained on face crops, so a number for a face-free image would be meaningless.
 
-2. **Install dependencies:**
+`deepverify/detector.py` is the single inference implementation. Both the FastAPI
+service (`deepverify/api.py`) and the Gradio Space (`app.py`) import it, so the
+demo and the API cannot drift apart.
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Running locally
 
-3. **Build the Docker image:**
+```bash
+python3.11 -m venv .venv && ./.venv/bin/pip install -r requirements.txt
 
-   ```bash
-   docker build -t deep-verify-microservice .
-   ```
+# FastAPI service
+./.venv/bin/uvicorn deepverify.api:app --reload
+curl -F file=@tests/fixtures/real.png http://localhost:8000/v1/detect
 
-4. **Run the Docker container:**
+# Gradio UI
+./.venv/bin/python app.py
 
-   ```bash
-   docker run -d --name deep-verify-microservice -p 8000:8000 deep-verify-microservice
-   ```
+# Tests
+PYTHONPATH=. ./.venv/bin/pytest tests/ -q
+```
 
-## 🚀 Usage
+Docker:
 
-1. **Run the app in development mode:**
+```bash
+docker build -t deepverify . && docker run -p 8000:8000 deepverify
+```
 
-   ```bash
-   uvicorn app.main:app --reload
-   ```
+## API
 
-2. **Build the Docker image:**
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `GET` | `/health` | status, model id, weights SHA-256, device, threshold |
+| `POST` | `/v1/detect` | multipart `file` -> detection result |
 
-   ```bash
-   docker build -t deep-verify-microservice .
-   ```
+`POST /v1/detect` returns:
 
-3. **Run the Docker container:**
+```json
+{
+  "is_deepfake": false,
+  "label": "real",
+  "fake_probability": 0.0960,
+  "real_probability": 0.9040,
+  "threshold": 0.5,
+  "face_box": [51, 2, 182, 166],
+  "face_confidence": 0.949,
+  "model_id": "yermandy/deepfake-detection/model.torchscript"
+}
+```
 
-   ```bash
-   docker run -d --name deep-verify-microservice -p 8000:8000 deep-verify-microservice
-   ```
+Errors: `400` unreadable image, `413` over the size limit, `422` no face detected.
 
-## 📚 Documentation
+## Configuration
 
-- FastAPI: <https://fastapi.tiangolo.com/>
-- Docker: <https://docs.docker.com/>
-- Uvicorn: <https://www.uvicorn.org/>
-- TensorFlow: <https://www.tensorflow.org/>
-- PyTorch: <https://pytorch.org/>
+Environment variables, all prefixed `DEEPVERIFY_`:
 
-## 🔧 API Endpoints
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `DEEPVERIFY_DEVICE` | `auto` | `auto` resolves cuda, then mps, then cpu |
+| `DEEPVERIFY_DECISION_THRESHOLD` | `0.5` | uncalibrated; see limitations |
+| `DEEPVERIFY_FACE_MARGIN` | `1.3` | crop side as a multiple of the longest box edge |
+| `DEEPVERIFY_FACE_SCORE_THRESHOLD` | `0.6` | YuNet minimum confidence |
+| `DEEPVERIFY_MAX_UPLOAD_BYTES` | `10485760` | 10 MB |
+| `DEEPVERIFY_ALLOWED_ORIGINS` | `*` | comma-separated CORS origins |
 
-- **POST /api/v1/detect/image**
-  - **Description**: Endpoint for detecting deepfakes in images.
-  - **Request Body**: `{"image": "base64_encoded_image"}`
-  - **Response**: `{"isDeepfake": true/false, "confidence": float}`
+## Notes on two engineering choices
 
-- **POST /api/v1/detect/video**
-  - **Description**: Endpoint for detecting deepfakes in videos.
-  - **Request Body**: `{"video": "base64_encoded_video"}`
-  - **Response**: `{"isDeepfake": true/false, "confidence": float}`
+**YuNet over MTCNN.** `facenet-pytorch` pins `torch<2.3`, which cannot coexist with
+the `torch>=2.8` that ZeroGPU requires. OpenCV's YuNet has no torch dependency, ships
+as a 232 KB ONNX file, and detects reliably at this resolution.
 
-## 📜 License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-## 🙏 Acknowledgements
-
-Special thanks to all contributors and supporters who made this project possible, including the development team and advisors.
+**bfloat16 is forced, not chosen.** The exported TorchScript graph casts activations
+to bfloat16 internally, so float32 weights raise a dtype mismatch inside the trace.
+The archive also contains a float64 tensor, so it must be loaded on CPU and cast
+before moving to MPS, which rejects float64.

@@ -1,20 +1,24 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.9
+FROM python:3.11-slim
 
-# Set the working directory in the container
-WORKDIR /app
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    HF_HOME=/home/app/.cache/huggingface
 
-# Copy the requirements file into the container
-COPY requirements.txt .
+RUN useradd --create-home --uid 1000 app
+WORKDIR /home/app
 
-# Install the dependencies
+COPY --chown=app:app requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code into the container
-COPY . .
+COPY --chown=app:app deepverify ./deepverify
 
-# Expose the port the app runs on
+USER app
 EXPOSE 8000
 
-# Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Warm the weights into the image layer so the first request is not a 607MB download.
+RUN python -c "from deepverify.detector import get_detector; get_detector()"
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s \
+    CMD python -c "import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"
+
+CMD ["uvicorn", "deepverify.api:app", "--host", "0.0.0.0", "--port", "8000"]

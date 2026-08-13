@@ -1,4 +1,19 @@
-fastapi
-uvicorn
-opencv-python-headless
-numpy
+# Pinned to the versions this service was tested against.
+# torch is held at a ZeroGPU-supported release: https://huggingface.co/docs/hub/spaces-zerogpu
+torch==2.11.0
+transformers==5.15.0
+huggingface_hub==1.27.0
+
+# YuNet face detection. Chosen over facenet-pytorch, which pins torch<2.3 and so
+# cannot coexist with the torch>=2.8 that ZeroGPU requires.
+opencv-python-headless==5.0.0.93
+pillow==12.3.0
+numpy==2.4.6
+
+fastapi==0.141.1
+uvicorn[standard]==0.52.3
+python-multipart==0.0.32
+pydantic-settings==2.15.0
+
+gradio==6.24.0
+spaces==0.51.1

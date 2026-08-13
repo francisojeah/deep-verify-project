@@ -1,0 +1,20 @@
+[project]
+name = "deepverify"
+version = "1.0.0"
+description = "Image deepfake detection service over a pre-trained CLIP ViT-L/14 detector"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+[tool.setuptools.packages.find]
+include = ["deepverify*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
