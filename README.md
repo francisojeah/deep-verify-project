@@ -76,7 +76,7 @@ PYTHONPATH=. ./.venv/bin/python -m benchmarks.run_benchmark \
 ## Architecture
 
 ```
-React + Vite ──┬────────────────────────────► Hugging Face Space (ZeroGPU)
+React + Vite ──┬────────────────────────────► Hugging Face Space (CPU)
   (Vercel)     │                                 Gradio adapter
                │                                 └─ deepverify.detector
                └──► NestJS API ──────────────────────────┘
@@ -86,9 +86,9 @@ React + Vite ──┬───────────────────�
 ```
 
 Three services because the ML runtime and the CRUD runtime have genuinely
-different shapes: one holds a 607 MB model and scales on GPU-seconds, the other
-holds a database pool and scales on concurrent connections. Coupled, every auth
-change would redeploy the model.
+different shapes: one holds a 607 MB model in memory and scales on inference
+capacity, the other holds a database pool and scales on concurrent connections.
+Coupled, every auth change would redeploy the model.
 
 The honest caveat: **at this scale a single FastAPI service with SQLite would be
 simpler.** The split earns its keep once there are real users and a GPU bill.
@@ -125,17 +125,22 @@ cd web-apps/deep-verify-frontend && npm install && npm run dev
 
 ## Deployment
 
-| Service   | Host                        | Notes                                                |
-| --------- | --------------------------- | ---------------------------------------------------- |
-| Detection | Hugging Face Space, ZeroGPU | Free tier. GPU quota-limited, sleeps when idle.      |
-| API       | Render                      | Free tier spins down after 15 min; ~50 s cold start. |
-| Client    | Vercel                      | Root directory `web-apps/deep-verify-frontend`.      |
-| Database  | MongoDB Atlas M0            | Free tier.                                           |
+| Service   | Host               | Notes                                                |
+| --------- | ------------------ | ---------------------------------------------------- |
+| Detection | Hugging Face Space | Runs on CPU, ~1-2 s per image. Sleeps when idle.     |
+| API       | Render             | Free tier spins down after 15 min; ~50 s cold start. |
+| Client    | Vercel             | Root directory `web-apps/deep-verify-frontend`.      |
+| Database  | MongoDB Atlas M0   | Free tier.                                           |
 
 Render's free tier has 512 MB of RAM, which cannot hold a 607 MB model, so the
-detector is not deployed there. ZeroGPU is free, GPU-backed, and puts the demo on
-the same page as the model card — which is the right place for it when the whole
-point is that the weights are someone else's.
+detector is not deployed there. A Hugging Face Space puts the demo on the same
+page as the model card, which is the right place for it when the whole point is
+that the weights are someone else's.
+
+The Space runs the model on **CPU on purpose**. ZeroGPU is free and much faster,
+but its quota is a few minutes of GPU time per day shared across visitors, and it
+starts refusing runs once that is spent. CLIP ViT-L/14 costs about a second per
+image on CPU, so the trade is a second of latency for a demo that always answers.
 
 ## What I would do next
 

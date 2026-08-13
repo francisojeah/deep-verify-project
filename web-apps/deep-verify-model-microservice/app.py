@@ -9,23 +9,48 @@ from pathlib import Path
 
 import gradio as gr
 
-from deepverify.detector import NoFaceDetectedError, get_detector
-
-try:  # no-op outside ZeroGPU, but must be absent from local dev installs
-    import spaces
-
-    gpu = spaces.GPU(duration=30)
-except ImportError:
-
-    def gpu(fn):
-        return fn
-
+from deepverify.config import Settings
+from deepverify.detector import DeepfakeDetector, NoFaceDetectedError
 
 MODEL_URL = "https://huggingface.co/yermandy/deepfake-detection"
 CODE_URL = "https://github.com/francisojeah/deep-verify-project"
 RESULTS = Path(__file__).parent / "benchmarks" / "results" / "latest.json"
 
-detector = get_detector()
+try:
+    import spaces
+
+    ON_ZERO_GPU = True
+except ImportError:  # local development
+    ON_ZERO_GPU = False
+
+# ZeroGPU requires a cuda placement at module level and refuses to start without
+# at least one @spaces.GPU function, so the primary detector is GPU-resident.
+detector = DeepfakeDetector(Settings(device="cuda" if ON_ZERO_GPU else "auto"))
+
+_cpu_detector: DeepfakeDetector | None = None
+
+
+def _score_on_cpu(face) -> float:
+    """Fallback for when the shared GPU quota is spent.
+
+    Built lazily so the second copy of the weights only costs memory if it is
+    actually needed. CLIP ViT-L/14 is about a second per image on CPU, which is
+    a better demo than an error.
+    """
+    global _cpu_detector
+    if _cpu_detector is None:
+        _cpu_detector = DeepfakeDetector(Settings(device="cpu"))
+    return _cpu_detector.score_faces([face])[0]
+
+
+def _score_on_gpu(face) -> float:
+    return detector.score_faces([face])[0]
+
+
+if ON_ZERO_GPU:
+    # Only the forward pass is GPU-scoped; face detection stays on CPU. Keeping
+    # the window small stretches the daily quota and improves queue priority.
+    _score_on_gpu = spaces.GPU(duration=15)(_score_on_gpu)
 
 
 def _measured_performance() -> str:
@@ -56,29 +81,34 @@ def _measured_performance() -> str:
     return "\n".join(lines)
 
 
-@gpu
 def analyse(image):
     if image is None:
         raise gr.Error("Upload an image first.")
 
+    # Face detection runs here, outside any GPU window: it is cheap, and it keeps
+    # the no-face case a plain exception rather than one crossing a process
+    # boundary.
     try:
-        prediction = detector.predict(image)
+        face = detector.crop_face(image)
     except NoFaceDetectedError:
         raise gr.Error(
             "No face detected. This model is trained on face crops, so a score on a "
             "face-free image would be meaningless - it returns nothing rather than guess."
         )
 
-    scores = {
-        "Manipulated": prediction.fake_probability,
-        "Authentic": prediction.real_probability,
-    }
+    try:
+        fake_probability = _score_on_gpu(face.image)
+    except Exception:  # quota spent, queue timeout - answer anyway
+        fake_probability = _score_on_cpu(face.image)
+
+    threshold = detector.threshold
+    is_deepfake = fake_probability >= threshold
+    scores = {"Manipulated": fake_probability, "Authentic": 1.0 - fake_probability}
     verdict = (
-        f"### {'Likely manipulated' if prediction.is_deepfake else 'No manipulation detected'}\n\n"
-        f"p(manipulated) = **{prediction.fake_probability:.4f}** "
-        f"at a decision threshold of {prediction.threshold}.\n\n"
-        f"Face found at {prediction.face_box} with detector confidence "
-        f"{prediction.face_confidence:.3f}."
+        f"### {'Likely manipulated' if is_deepfake else 'No manipulation detected'}\n\n"
+        f"p(manipulated) = **{fake_probability:.4f}** "
+        f"at a decision threshold of {threshold}.\n\n"
+        f"Face found at {face.box} with detector confidence {face.confidence:.3f}."
     )
     return scores, verdict
 

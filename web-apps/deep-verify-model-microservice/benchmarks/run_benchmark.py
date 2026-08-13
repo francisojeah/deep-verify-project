@@ -147,7 +147,7 @@ def score(
             image = sample.fetch(index).convert("RGB")
             if not spec.pre_cropped:
                 try:
-                    image = detector.crop_face(image)
+                    image = detector.crop_face(image).image
                 except NoFaceDetectedError:
                     skipped += 1
                     continue

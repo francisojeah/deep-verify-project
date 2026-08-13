@@ -11,7 +11,7 @@ from PIL import Image
 from transformers import CLIPImageProcessor
 
 from .config import Settings, get_settings
-from .faces import BoundingBox, FaceCropper, NoFaceDetectedError
+from .faces import BoundingBox, Face, FaceCropper, NoFaceDetectedError
 
 __all__ = ["DeepfakeDetector", "Prediction", "NoFaceDetectedError", "get_detector"]
 
@@ -108,9 +108,9 @@ class DeepfakeDetector:
         # Column 1 is p(fake); see upstream inference_torchscript.py.
         return logits.float().softmax(dim=1)[:, 1].cpu().tolist()
 
-    def crop_face(self, image: Image.Image) -> Image.Image:
-        """Largest detected face, cropped. Raises NoFaceDetectedError if absent."""
-        return self._cropper.largest_face(image).image
+    def crop_face(self, image: Image.Image) -> Face:
+        """Largest detected face. Raises NoFaceDetectedError if absent."""
+        return self._cropper.largest_face(image)
 
     def predict(self, image: Image.Image) -> Prediction:
         """Detect the largest face, crop it, and score it.

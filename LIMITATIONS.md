@@ -78,9 +78,11 @@ The caveats that matter:
 
 ## Operational
 
-- The demo runs on Hugging Face ZeroGPU free tier: GPU time is quota-limited
-  (about 2 minutes per day for anonymous visitors) and the Space sleeps when idle,
-  so the first request after a pause is slow.
+- The demo runs the model on CPU, at roughly one to two seconds per image. This
+  is deliberate: the free ZeroGPU tier is far faster but its quota is a few
+  minutes of GPU time per day shared across visitors, after which it refuses runs
+  entirely. The Space still sleeps when idle, so the first request after a pause
+  is slow.
 - The NestJS API is on Render's free tier, which spins down after 15 minutes and
   cold-starts in roughly 50 seconds.
 - Uploaded images are not retained after analysis.
