@@ -1,123 +1,114 @@
-// src/pages/DetectionHistoryPage.tsx
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { FiClock } from "react-icons/fi";
+
 import DashboardLayout from "../../components/DashboardLayout";
 import MetaTags from "../../components/MetaTags";
-import PageLoader from "../../components/PageLoader";
+import Button from "../../components/ui/Button";
+import { Card, CardBody } from "../../components/ui/Card";
+import StatusPill from "../../components/ui/StatusPill";
+import EmptyState from "../../components/ui/EmptyState";
+import Skeleton from "../../components/ui/Skeleton";
+import Alert from "../../components/ui/Alert";
+import { api, errorMessage } from "../../lib/api";
 import { DetectionHistory } from "./UserDashboard";
 
+const columns = ["File", "Verdict", "p(manipulated)", "Analysed"];
 
 const DetectionHistoryPage: React.FC = () => {
-  const [detectionHistory, setDetectionHistory] = useState<DetectionHistory[]>(
-    []
-  );
+  const [history, setHistory] = useState<DetectionHistory[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchDetectionHistory = async () => {
-      try {
-        const response = await axios.get(
-          "https://deep-verify-backend.onrender.com/backend/v1/detection/detection-history"
-        );
-        setDetectionHistory(response.data);
-      } catch (error) {
-        console.error("Error fetching detection history:", error);
-      } finally {
-        setLoading(false);
-      }
+    let active = true;
+    api
+      .get<DetectionHistory[]>("/detection/detection-history")
+      .then(({ data }) => active && setHistory(data ?? []))
+      .catch((caught) => active && setError(errorMessage(caught, "Could not load history.")))
+      .finally(() => active && setLoading(false));
+    return () => {
+      active = false;
     };
-
-    fetchDetectionHistory();
   }, []);
-
-  console.log(detectionHistory)
-
-  const handleHistoryItemClick = (id?: string) => {
-    navigate(`/detection/${id}`);
-  };
 
   return (
     <DashboardLayout>
       <MetaTags title="Detection History" />
-      {loading ? (
-        <PageLoader />
-      ) : (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold text-black dark:text-white mb-6">
-            Detection History
-          </h1>
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+        <header className="pb-6">
+          <h1 className="text-2xl font-semibold text-foreground">Detection history</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Every image you have analysed, most recent first.
+          </p>
+        </header>
 
-          <div className="bg-white dark:bg-gray-800 shadow overflow-x-auto sm:rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-900">
-              <thead className="bg-gray-50 dark:bg-gray-900">
-                <tr>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-                  >
-                    File Name
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-                  >
-                    Media Type
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-                  >
-                    Is Deepfake
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-                  >
-                    Confidence
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
-                  >
-                    Detected At
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-gray-950 divide-y divide-gray-200 dark:divide-gray-900">
-                {detectionHistory.map((item) => (
-                  <tr
-                    key={item.id}
-                    onClick={() => handleHistoryItemClick(item?._id)}
-                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                      {item.fileName}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {item.mediaType}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${item.isDeepfake ? "bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-200" : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"}`}
-                      >
-                        {item.isDeepfake ? "Yes" : "No"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {item.confidence.toFixed(2)}%
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {new Date(item.detectedAt).toLocaleString()}
-                    </td>
+        {error && (
+          <Alert tone="danger" className="mb-6">
+            {error}
+          </Alert>
+        )}
+
+        <Card>
+          {loading ? (
+            <CardBody className="space-y-3">
+              {[0, 1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-11 w-full" />
+              ))}
+            </CardBody>
+          ) : history.length === 0 ? (
+            <EmptyState
+              icon={<FiClock className="h-5 w-5" aria-hidden />}
+              title="Nothing analysed yet"
+              description="Results appear here once you analyse an image."
+              action={
+                <Link to="/dashboard">
+                  <Button>Analyse an image</Button>
+                </Link>
+              }
+            />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
+                    {columns.map((column) => (
+                      <th key={column} className="px-5 py-3 font-medium">
+                        {column}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {history.map((item) => (
+                    <tr
+                      key={item._id}
+                      onClick={() => navigate(`/detection/${item._id}`)}
+                      className="cursor-pointer hover:bg-surface-muted"
+                    >
+                      <td className="max-w-[18rem] truncate px-5 py-3 font-medium text-foreground">
+                        {item.fileName}
+                      </td>
+                      <td className="px-5 py-3">
+                        <StatusPill tone={item.isDeepfake ? "danger" : "success"}>
+                          {item.isDeepfake ? "Manipulated" : "Authentic"}
+                        </StatusPill>
+                      </td>
+                      <td className="px-5 py-3 tabular-nums text-muted-foreground">
+                        {(item.confidence / 100).toFixed(4)}
+                      </td>
+                      <td className="px-5 py-3 text-muted-foreground">
+                        {new Date(item.detectedAt).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Card>
+      </div>
     </DashboardLayout>
   );
 };

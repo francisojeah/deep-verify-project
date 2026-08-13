@@ -125,7 +125,7 @@ export const loadUser = createAsyncThunk<UserStateProps>(
 
     try {
       const { data }: any = await axios.get<UserStateProps>(
-        `${proxyAddress}/user`,
+        `${proxyAddress}/backend/v1/user`,
         {
           headers: { "x-access-token": token },
         }
@@ -145,7 +145,7 @@ export const profileUpdate = createAsyncThunk<UserStateProps, LoginProps>(
 
     try {
       const { data }: any = await axios.put(
-        `${proxyAddress}/user`,
+        `${proxyAddress}/backend/v1/user`,
         values,
         {
           headers,

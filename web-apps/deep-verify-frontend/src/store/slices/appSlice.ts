@@ -1,20 +1,20 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_BASE_URL } from "../../lib/api";
+import type { RootState } from "../store";
 
-// Define the base query
 const baseQuery = fetchBaseQuery({
-  // baseUrl: "http://localhost:3000/backend/v1",
-  baseUrl: "https://deep-verify-backend.onrender.com/backend/v1",
-  prepareHeaders: (headers, { getState }: any) => {
-    const token = getState()?.auth?.token;
-
+  baseUrl: `${API_BASE_URL}/backend/v1`,
+  prepareHeaders: (headers, { getState }) => {
+    // The token lives on the user slice. This previously read state.auth,
+    // which does not exist, so the header was never sent.
+    const token = (getState() as RootState)?.user?.token;
     if (token) {
-      headers.set("authorization", `Bearer ${token}`);
+      headers.set("x-access-token", token);
     }
     return headers;
   },
 });
 
-// Create an API slice
 export const appApi = createApi({
   reducerPath: "appApi",
   baseQuery,
@@ -25,10 +25,7 @@ export const appApi = createApi({
       query: () => "users/user",
       providesTags: ["User"],
     }),
-  })
+  }),
 });
 
-// Export hooks for usage in functional components
-export const {
-  useLoadUserQuery
-} = appApi;
+export const { useLoadUserQuery } = appApi;

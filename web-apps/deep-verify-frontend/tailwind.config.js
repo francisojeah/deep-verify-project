@@ -2,75 +2,56 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
 const flowbite = require("flowbite-react/tailwind");
 
+const token = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-    flowbite.content(),
-  ],
-  darkMode: 'class',
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}", flowbite.content()],
+  darkMode: "class",
   theme: {
     extend: {
       fontFamily: {
         sans: ["Montserrat", ...defaultTheme.fontFamily.sans],
       },
+      colors: {
+        background: token("background"),
+        surface: {
+          DEFAULT: token("surface"),
+          muted: token("surface-muted"),
+        },
+        border: {
+          DEFAULT: token("border"),
+          strong: token("border-strong"),
+        },
+        foreground: token("foreground"),
+        "muted-foreground": token("muted-foreground"),
+        brand: {
+          DEFAULT: token("brand"),
+          hover: token("brand-hover"),
+          subtle: token("brand-subtle"),
+        },
+        success: {
+          DEFAULT: token("success"),
+          subtle: token("success-subtle"),
+        },
+        danger: {
+          DEFAULT: token("danger"),
+          subtle: token("danger-subtle"),
+        },
+        ring: token("ring"),
+      },
+      borderRadius: {
+        // One scale: controls use lg, cards use xl. Nothing else.
+        lg: "0.625rem",
+        xl: "0.875rem",
+      },
       boxShadow: {
+        card: "0 1px 2px rgb(16 15 20 / 0.04), 0 8px 24px -12px rgb(16 15 20 / 0.12)",
         custom: "0px 4px 20px 0px rgba(0, 0, 0, 0.25)",
       },
-      colors: {
-        custom: {
-          primary:"#8b5cf6",
-          success: "#8ADD21",
-          danger: "#DD2121",
-        },
-        'medium-purple': {
-          '50': '#f7f3ff',
-          '100': '#efe9fe',
-          '200': '#e2d6fe',
-          '300': '#cbb5fd',
-          '400': '#ad8bfa',
-          '500': '#8b5cf6',
-          '600': '#713aed',
-          '700': '#5e28d9',
-          '800': '#4e21b6',
-          '900': '#421d95',
-          '950': '#2a1065',
+      transitionTimingFunction: {
+        brand: "cubic-bezier(0.22, 1, 0.36, 1)",
       },
-        light: {
-          background: "#FFFFFF", 
-          primaryText: "#060606",
-          secondaryText: "#6C757D", 
-          primaryButtonBg: "#8b5cf6", 
-          primaryButtonText: "#FFFFFF",
-          secondaryButtonBg: "#6C757D", 
-          secondaryButtonText: "#FFFFFF", 
-          success: "#28A745", 
-          warning: "#FFC107", 
-          link: "#17A2B8", 
-          border: "#E0E0E0", 
-          card: "#FFFFFF", 
-        },
-        dark: {
-          background: "#060606", 
-          primaryText: "#FFFFFF", 
-          secondaryText: "#B0B3B8", 
-          primaryButtonBg: "#8b5cf6", 
-          primaryButtonText: "#FFFFFF", 
-          secondaryButtonBg: "#495057", 
-          secondaryButtonText: "#FFFFFF", 
-          success: "#81C784", 
-          warning: "#FFA000", 
-          link: "#00B8D4", 
-          border: "#424242", 
-          card: "#1E1E1E", 
-        }
-      },
-    },
-    screens: {
-      ...defaultTheme.screens,
     },
   },
-  plugins: [
-    flowbite.plugin(),
-  ],
+  plugins: [flowbite.plugin()],
 };

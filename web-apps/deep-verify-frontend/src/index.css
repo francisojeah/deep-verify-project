@@ -1,238 +1,115 @@
-/* CSS Variables */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Semantic tokens as RGB triplets so Tailwind's <alpha-value> works.
+   Light is the default; .dark redefines only what changes. */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-
-  --background-light: #FFFFFF; 
-  --primary-text-light: #343A40; 
-
-  --background-dark: #060606;
-  --primary-text-dark: #FFFFFF; 
-
-  /* Primary Colors */
-  --primary-color-1-hex: #063760;
-  --primary-color-2-hex: #597995;
-  --primary-color-3-hex: #ACBCCA;
-  /* Secondary Colors */
-  --secondary-color-1-hex: #B5D2CB;
-  --secondary-color-2-hex: #CDE1DC;
-  --secondary-color-3-hex: #E6F0ED;
-  /* Accent Colors */
-  --accent-color-1-hex: #40E0BA;
-  --accent-color-2-hex: #7FEAD1;
-  --accent-color-3-hex: #BFF4E8;
-
-  --scrollbar-track-light: #f0f4fc;
-  --scrollbar-thumb-light: #d1d5db;
-  --scrollbar-thumb-hover-light: #a0aec0;
-
-  --scrollbar-track-dark: #121212;
-  --scrollbar-thumb-dark: #4a5568; 
-  --scrollbar-thumb-hover-dark: #2d3748;
+  --background: 250 250 249;
+  --surface: 255 255 255;
+  --surface-muted: 244 244 242;
+  --border: 229 228 225;
+  --border-strong: 213 212 208;
+  --foreground: 22 21 26;
+  --muted-foreground: 107 106 115;
+  --brand: 124 58 237;
+  --brand-hover: 109 40 217;
+  --brand-subtle: 243 238 255;
+  --success: 21 128 61;
+  --success-subtle: 220 246 229;
+  --danger: 185 28 28;
+  --danger-subtle: 254 231 231;
+  --ring: 124 58 237;
 }
 
-
-/* Light mode styles */
-body {
-  background-color: var(--background-light);
-  /* color: var(--primary-text-light); */
+.dark {
+  --background: 11 11 14;
+  --surface: 20 20 25;
+  --surface-muted: 28 28 35;
+  --border: 42 42 51;
+  --border-strong: 58 58 69;
+  --foreground: 245 245 247;
+  --muted-foreground: 161 161 172;
+  --brand: 167 139 250;
+  --brand-hover: 139 92 246;
+  --brand-subtle: 39 30 62;
+  --success: 74 222 128;
+  --success-subtle: 20 46 32;
+  --danger: 248 113 113;
+  --danger-subtle: 56 22 22;
+  --ring: 167 139 250;
 }
 
-/* Default styles for light mode */
+@layer base {
+  body {
+    @apply bg-background text-foreground text-base font-normal antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
 ::-webkit-scrollbar {
   width: 10px;
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
-  background: var(--scrollbar-track-light);
+  background: rgb(var(--surface-muted));
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb-light);
+  background: rgb(var(--border-strong));
   border-radius: 5px;
 }
 
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover-light);
+  background: rgb(var(--muted-foreground));
 }
 
-/* Dark mode styles */
-.dark body {
-  background-color: var(--background-dark);
-  /* color: var(--primary-text-dark); */
-}
-
-.dark ::-webkit-scrollbar-track {
-  background: var(--scrollbar-track-dark);
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb-dark);
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover-dark);
-}
-
-/* Media query for smaller screens */
 @media screen and (max-width: 768px) {
-  /* Adjust scrollbar width for smaller screens */
   ::-webkit-scrollbar {
     width: 5px;
   }
-}
-
-
-/* Typography */
-body {
-  @apply text-base font-normal;
-}
-
-h1 {
-  @apply text-4xl font-bold;
-}
-
-h2 {
-  @apply text-2xl font-medium;
-}
-
-h3 {
-  @apply text-xl font-medium;
-}
-
-p {
-  @apply text-base font-normal;
-}
-
-/* Captions */
-span.caption {
-  @apply text-xs font-normal;
 }
 
 .custom-shadow {
   box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.25);
 }
 
-/* Primary Colors */
-.primary-color-1 {
-  color: var(--primary-color-1);
-}
-
-.primary-color-2 {
-  color: var(--primary-color-2);
-}
-
-.primary-color-3 {
-  color: var(--primary-color-3);
-}
-
-/* Secondary Colors */
-.secondary-color-1 {
-  color: var(--secondary-color-1);
-}
-
-.secondary-color-2 {
-  color: var(--secondary-color-2);
-}
-
-.secondary-color-3 {
-  color: var(--secondary-color-3);
-}
-
-/* Accent Colors */
-.accent-color-1 {
-  color: var(--accent-color-1);
-}
-
-.accent-color-2 {
-  color: var(--accent-color-2);
-}
-
-.accent-color-3 {
-  color: var(--accent-color-3);
-}
-
-/* global-styles.css */
-
-html {
-  scroll-behavior: smooth;
-}
-
-
-button, a {
-  @apply cursor-pointer transition-all duration-200;
-
-  /* Focus styles */
-  
-}
-
-button:focus, a:focus {
-  @apply outline-none; 
-}
-
-
-/* Apply specific anchor styles */
-a {
-  padding: unset;
-  margin: unset;
-  text-decoration: none;
-}
-
-.tiptap ul p,
-.tiptap ol p {
-  @apply inline;
-}
- 
-.tiptap p.is-editor-empty:first-child::before {
-  @apply pointer-events-none float-left h-0 text-sm;
-}
-
-
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-} */
-
-/* body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-} */
-
-
+/* Marketing-page animations. Used by HeroSection and HeaderIllustration. */
 @keyframes zoom {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
-  }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
 }
 
 .animate-zoom {
   animation: zoom 1.5s infinite;
 }
 
-
 .cube-spinner {
   animation: spin-cube 14s ease-in-out infinite;
   transform-style: preserve-3d;
-  transform-origin: -50% 50px; /* Adjust this origin for positioning */
+  transform-origin: -50% 50px;
   position: absolute;
   inset: 0;
 }
@@ -241,79 +118,55 @@ a {
   position: absolute;
   overflow: visible;
   inset: 0;
-  height: 100px; /* Updated height */
+  height: 100px;
   text-align: center;
   background: linear-gradient(45deg, #d8b4fe, #c4b5fd 30%, #a78bfa 60%, #8b5cf6 90%);
   -webkit-background-clip: text;
-  -moz-background-clip: text; /* Firefox */
-  background-clip: text; /* Standard */
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .face-1 {
-  transform: translateZ(50px); /* Updated translateZ value to half the new height */
+  transform: translateZ(50px);
   -webkit-backface-visibility: hidden;
-  backface-visibility: hidden; /* Standard */
+  backface-visibility: hidden;
 }
 
 .face-2 {
-  transform: rotateX(120deg) translateZ(50px); /* Updated translateZ value */
+  transform: rotateX(120deg) translateZ(50px);
   -webkit-backface-visibility: hidden;
-  backface-visibility: hidden; /* Standard */
+  backface-visibility: hidden;
 }
 
 .face-3 {
-  transform: rotateX(240deg) translateZ(50px); /* Updated translateZ value */
+  transform: rotateX(240deg) translateZ(50px);
   -webkit-backface-visibility: hidden;
-  backface-visibility: hidden; /* Standard */
+  backface-visibility: hidden;
 }
 
 @keyframes spin-cube {
-  0%, 100% {
-    transform: rotateX(0deg);
-  }
-  0%, 25% {
-    transform: rotateX(0deg);
-  }
-  33%, 58% {
-    transform: rotateX(120deg);
-  }
-  66%, 92% {
-    transform: rotateX(240deg);
-  }
-  100% {
-    transform: rotateX(1turn);
-  }
+  0%, 25% { transform: rotateX(0deg); }
+  33%, 58% { transform: rotateX(120deg); }
+  66%, 92% { transform: rotateX(240deg); }
+  100% { transform: rotateX(1turn); }
 }
 
 @keyframes left-float-in-out {
-  0% {
-    transform: translateY(-20%) translateX(-20%) rotate(0deg);
-  }
-  50% {
-    transform: translateY(5%) translateX(0) rotate(45deg);
-  }
-  100% {
-    transform: translateY(-20%) translateX(-20%) rotate(0deg);
-  }
+  0% { transform: translateY(-20%) translateX(-20%) rotate(0deg); }
+  50% { transform: translateY(5%) translateX(0) rotate(45deg); }
+  100% { transform: translateY(-20%) translateX(-20%) rotate(0deg); }
 }
 
 @keyframes right-float-in-out {
-  0% {
-    transform: translateY(20%) translateX(20%) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-5%) translateX(0) rotate(-45deg);
-  }
-  100% {
-    transform: translateY(20%) translateX(20%) rotate(0deg);
-  }
+  0% { transform: translateY(20%) translateX(20%) rotate(0deg); }
+  50% { transform: translateY(-5%) translateX(0) rotate(-45deg); }
+  100% { transform: translateY(20%) translateX(20%) rotate(0deg); }
 }
 
 .animate-left-float-in-out {
-  animation: left-float-in-out 15s ease-in-out infinite; 
+  animation: left-float-in-out 15s ease-in-out infinite;
 }
 
 .animate-right-float-in-out {
-  animation: right-float-in-out 15s ease-in-out infinite; 
+  animation: right-float-in-out 15s ease-in-out infinite;
 }
