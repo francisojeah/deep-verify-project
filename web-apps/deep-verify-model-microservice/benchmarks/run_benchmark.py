@@ -87,7 +87,9 @@ def load_balanced_sample(spec: DatasetSpec, per_class: int, seed: int, cache: Pa
 
         counts = {"fake": 0, "real": 0}
         paths, labels, groups = [], [], []
-        for row in stream.shuffle(seed=seed, buffer_size=5_000):
+        # Small buffer on purpose: a large one holds many undecoded rows at once,
+        # which is enough to exhaust a nearly-full disk once macOS starts swapping.
+        for row in stream.shuffle(seed=seed, buffer_size=1_000):
             name = to_name(row["label"])
             key = "fake" if name == spec.fake_label else "real"
             if counts[key] >= per_class:

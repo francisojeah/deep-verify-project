@@ -47,6 +47,13 @@ The caveats that matter:
   available. Every number here is cross-dataset and cross-manipulation, which is
   the harder setting. There is no measurement of the model in the domain it was
   trained on.
+- **Only one benchmark was completed.** A second run against
+  `Hemg/deepfake-and-real-images` was attempted, to compare across two unrelated
+  manipulation families, but it failed repeatedly on network errors fetching the
+  dataset shards. That dataset also carries no card and no source attribution, so
+  its origin cannot be verified from the data, which would have limited what the
+  comparison was worth. The spec is left in `benchmarks/datasets.py` so the run
+  can be repeated, and no partial or estimated figure from it appears anywhere.
 - **Preprocessing is not identical to the paper's.** The upstream evaluation used
   DeepfakeBench's face extraction. This service uses OpenCV YuNet with a 1.3x
   square margin crop. Close in spirit, not identical, and that alone can move the

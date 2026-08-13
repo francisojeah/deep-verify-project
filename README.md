@@ -1,169 +1,157 @@
+# DeepVerify
 
-# 🕵️‍♂️ DeepVerify: DeepFake Detection in Political Media
+Image deepfake detection: upload a photo containing a face, get a probability
+that the face was manipulated, with the model's provenance and measured
+performance shown next to the result.
 
-## 📖 Overview
+|                      |                                                                                           |
+| -------------------- | ----------------------------------------------------------------------------------------- |
+| **Live demo**        | https://huggingface.co/spaces/francisojeah/deep-verify                                    |
+| **Model**            | [`yermandy/deepfake-detection`](https://huggingface.co/yermandy/deepfake-detection) (MIT) |
+| **Measured results** | [`benchmarks/results/`](web-apps/deep-verify-model-microservice/benchmarks/results)       |
+| **Limitations**      | [LIMITATIONS.md](LIMITATIONS.md)                                                          |
 
-DeepVerify is a deepfake detection system designed to identify manipulated images and videos, specifically focusing on political media. This project utilizes advanced machine learning techniques to detect deepfakes and enhance the integrity of political content.
+## I did not train this model
 
-## 📜 Table of Contents
+DeepVerify runs a **published pre-trained checkpoint**: a CLIP ViT-L/14 visual
+encoder with LN-tuning, trained on FaceForensics++ by Yermakov et al. and
+released under MIT. The weights are downloaded from that repository at startup
+and used unmodified. No training or fine-tuning happens here.
 
-1. [📘 Introduction](#-introduction)
-2. [✨ Features](#-features)
-3. [💻 Tech Stack](#-tech-stack)
-4. [📊 Dataset](#-dataset)
-5. [⚙️ Installation](#-installation)
-6. [🚀 Usage](#-usage)
-7. [🧠 Model Development](#-model-development)
-8. [🏭 Production Workflow](#-production-workflow)
-9. [🤝 Contributing](#-contributing)
-10. [📄 License](#-license)
-11. [🙏 Acknowledgements](#-acknowledgements)
+What this repository contains is the engineering around it: face detection and
+cropping, the inference pipeline, a FastAPI service, an API layer with accounts
+and history, a React client, the deployment, and the benchmark below.
 
+The upstream authors report video-level AUROC of 98.0% on DFD, 96.6% on
+Celeb-DF-v2, 91.5% on FFIW and 87.2% on DFDC. **Those are their numbers, not
+mine.** Mine are below.
 
-## 📘 Introduction
+## Measured performance
 
-With the rise of deepfake technology, the spread of manipulated political media has become a significant concern. DeepVerify aims to provide a robust solution to detect such content, leveraging state-of-the-art machine learning models.
+Everything here comes from `benchmarks/run_benchmark.py`, run locally, with the
+raw output committed. Nothing is estimated.
 
-## ✨ Features
+**FakeAVCeleb, 2,210 images (1,105 per class), seed 42**
 
-- **🖼️ Image and Video Detection**: Supports deepfake detection for both images and videos.
-- **🧠 Ensemble Learning**: Combines predictions from multiple models to enhance accuracy.
-- **💻 User-friendly Interface**: Developed with React, TypeScript, and Tailwind CSS.
-- **📄 API Documentation**: Comprehensive API documentation using Swagger for integration and usage.
+| Metric                  | Value                               |
+| ----------------------- | ----------------------------------- |
+| ROC-AUC                 | **0.9244**                          |
+| PR-AUC                  | 0.9420                              |
+| Precision @ 0.5         | 0.950                               |
+| Recall @ 0.5            | 0.750                               |
+| F1 @ 0.5                | 0.838                               |
+| Best F1                 | 0.867 at threshold 0.271            |
+| **Video-level ROC-AUC** | **0.9209** over 1,252 source videos |
 
-## 💻 Tech Stack
+Confusion matrix at 0.5: TN 1061, FP 44, FN 276, TP 829. The model is
+conservative — it rarely calls an authentic face manipulated (44 false positives)
+but misses a quarter of the manipulations at the default threshold.
 
-- **Frontend**: React, TypeScript, Tailwind CSS, Vite
-- **Backend**: Node.js, NestJS
-- **Machine Learning Models**: XceptionNet, EfficientNet-B4, 3D ResNet, CNN-LSTM
-- **Database**: MongoDB
-- **Package Management**: npm
-- **Monorepo Management**: Turbo
+Three things to know about that number:
 
-## 📊 Dataset
+1. **It is cross-dataset and cross-manipulation.** The model was trained on
+   FaceForensics++ face-swap and reenactment. FakeAVCeleb is mostly Wav2Lip
+   lip-sync on VoxCeleb2 sources — a family it has never seen. This is the hard
+   setting, not the flattering one.
+2. **No in-distribution number was measured.** FaceForensics++ and Celeb-DF-v2
+   both require a signed access form that could not be completed in time. That is
+   a real gap, stated rather than hidden.
+3. **The dataset's Hub listing is wrong, and it matters.**
+   `thenewsupercell/with_id_celeb-df-image-dataset` is published as Celeb-DF, but
+   its filenames (`00001_id00220_wavtolip.mp4`) are VoxCeleb2 speaker ids with
+   Wav2Lip manipulations. That is FakeAVCeleb. Reporting it as Celeb-DF would have
+   produced a number that looked comparable to the paper's 96.6% and was not.
 
-The project utilizes the [FaceForensics++](https://github.com/ondyari/FaceForensics) dataset for training and evaluation, which includes a comprehensive set of images and videos with manipulated and real content.
+Video-level AUC is reported alongside frame-level because frames from one source
+video are not independent, so the effective sample size is well below 2,210.
 
-## ⚙️ Installation
+Reproduce:
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/francisojeah/deep-verify-project.git
-   cd deep-verify
-   ```
-
-2. **Frontend setup:**
-   ```bash
-   cd web-apps/frontend
-   npm install
-   ```
-
-3. **Backend setup:**
-   ```bash
-   cd web-apps/backend
-   npm install
-   ```
-
-4. **Microservice setup:**
-   ```bash
-   cd web-apps/microservice
-   docker build -t deepverify-microservice .
-   ```
-
-5. **Database setup:**
-   Create a MongoDB instance and configure your `.env` file in the backend folder with the necessary database details.
-
-   Example `.env` file:
-   ```bash
-   APP_NAME=DeepVerify
-   APP_DESCRIPTION=DeepFake Detection in Political Media
-   APP_SERVER_LISTEN_PORT=3000
-   APP_SERVER_LISTEN_IP=0.0.0.0
-   API_VERSION=v1
-   GLOBAL_PREFIX=backend
-   SERVER_URL=http://localhost:3000
-   CLIENT_URL=http://localhost:5173
-   JWT_SECRET=your_jwt_secret
-   JWT_TIME=3600
-   EMAIL_HOST=smtp.example.com
-   EMAIL_USER=your_email@example.com
-   EMAIL_PASSWORD=your_email_password
-   EMAIL_FROM=no-reply@example.com
-   SALT_ROUNDS=10
-   DB_URI=mongodb://localhost:27017/deepverify
-   GOOGLE_CLIENT_ID=your_google_client_id
-   GOOGLE_SECRET=your_google_secret
-   ```
-
-6. **Model setup:**
-   ```bash
-   cd models
-   python training/train.py
-   ```
-
-## 🚀 Usage
-
-1. **Start the frontend:**
-   ```bash
-   cd web-apps/frontend
-   npm run dev
-   ```
-
-2. **Start the backend:**
-   ```bash
-   cd web-apps/backend
-   npm run start:dev
-   ```
-
-3. **Start the microservice:**
-   ```bash
-   docker run -p 8000:8000 deepverify-microservice
-   ```
-
-
-## 🧠 Model Development
-
-### Data Preprocessing
-
-Run the preprocessing script to prepare the data:
 ```bash
-cd models/data
-python preprocess.py
+cd web-apps/deep-verify-model-microservice
+PYTHONPATH=. ./.venv/bin/python -m benchmarks.run_benchmark \
+  --dataset fakeavceleb --per-class 1200 --seed 42
 ```
 
-### Training the Model
+## Architecture
 
-Train the model using the training script:
-```bash
-cd models/training
-python train.py
+```
+React + Vite ──┬────────────────────────────► Hugging Face Space (ZeroGPU)
+  (Vercel)     │                                 Gradio adapter
+               │                                 └─ deepverify.detector
+               └──► NestJS API ──────────────────────────┘
+                     (Render)        detection, history, accounts
+                        │
+                    MongoDB Atlas
 ```
 
-### Evaluating the Model
+Three services because the ML runtime and the CRUD runtime have genuinely
+different shapes: one holds a 607 MB model and scales on GPU-seconds, the other
+holds a database pool and scales on concurrent connections. Coupled, every auth
+change would redeploy the model.
 
-Evaluate the model's performance:
-```bash
-cd models/evaluation
-python evaluate.py
+The honest caveat: **at this scale a single FastAPI service with SQLite would be
+simpler.** The split earns its keep once there are real users and a GPU bill.
+
+`deepverify/detector.py` is the only inference implementation. Both the FastAPI
+service and the Gradio Space import it, so the demo and the API cannot drift.
+
+## Repository layout
+
+```
+web-apps/
+  deep-verify-model-microservice/   FastAPI + Gradio, the detector and benchmarks
+  deep-verify-backend/              NestJS: accounts, detection history
+  deep-verify-frontend/             React + TypeScript + Vite
+model-development/                  unrun training scaffolding - see its README
+scripts/sync-benchmarks.mjs         regenerates the UI's metrics from committed runs
 ```
 
-## 🏭 Production Workflow
+## Running locally
 
-1. **Data Preprocessing**: Cleaning and preparing the FaceForensics++ dataset.
-2. **Model Training**: Training the selected models on the dataset.
-3. **Model Evaluation**: Assessing model performance and fine-tuning.
-4. **Deployment**: Deploying the backend and model microservices.
-5. **Integration**: Integrating the models with the frontend application.
+```bash
+# Detection service
+cd web-apps/deep-verify-model-microservice
+python3.11 -m venv .venv && ./.venv/bin/pip install -r requirements.txt
+./.venv/bin/uvicorn deepverify.api:app --reload      # http://localhost:8000
+PYTHONPATH=. ./.venv/bin/pytest tests/ -q
 
-## 🤝 Contributing
+# API layer  (needs DB_URI and ML_SERVICE_URL, see .env.example)
+cd web-apps/deep-verify-backend && npm install && npm run dev
 
-Contributions are welcome! If you have suggestions, bug reports, or improvements, please open an issue or submit a pull request.
+# Client  (needs VITE_ML_SERVICE_URL, see .env.example)
+cd web-apps/deep-verify-frontend && npm install && npm run dev
+```
 
-## 📄 License
+## Deployment
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+| Service   | Host                        | Notes                                                |
+| --------- | --------------------------- | ---------------------------------------------------- |
+| Detection | Hugging Face Space, ZeroGPU | Free tier. GPU quota-limited, sleeps when idle.      |
+| API       | Render                      | Free tier spins down after 15 min; ~50 s cold start. |
+| Client    | Vercel                      | Root directory `web-apps/deep-verify-frontend`.      |
+| Database  | MongoDB Atlas M0            | Free tier.                                           |
 
-## 🙏 Acknowledgements
+Render's free tier has 512 MB of RAM, which cannot hold a 607 MB model, so the
+detector is not deployed there. ZeroGPU is free, GPU-backed, and puts the demo on
+the same page as the model card — which is the right place for it when the whole
+point is that the weights are someone else's.
 
-- The FaceForensics++ team for providing the dataset.
-- Open source contributors and the developer community.
+## What I would do next
+
+1. **Get official FaceForensics++ and Celeb-DF-v2 access** and measure
+   in-distribution, so the generalisation gap can be quantified rather than
+   asserted.
+2. **Calibrate the threshold** against a cost model instead of leaving it at 0.5.
+3. **Video support** by sampling frames and aggregating, which is how the upstream
+   paper reports its numbers and would close the gap with them.
+4. **Evaluate on [Deepfake-Eval-2024](https://huggingface.co/datasets/nuriachandra/Deepfake-Eval-2024)**,
+   an in-the-wild benchmark of deepfakes actually circulated in 2024. It is
+   access-gated, so it needs a request rather than an afternoon.
+5. **Per-group error rates.** No demographic breakdown was computed, so uniform
+   accuracy across groups cannot be assumed.
+
+## Licence
+
+MIT. The model weights are MIT, by their authors. Benchmark datasets carry their
+own licences and are not redistributed here.
