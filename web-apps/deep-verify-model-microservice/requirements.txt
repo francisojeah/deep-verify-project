@@ -8,7 +8,8 @@ huggingface_hub==1.27.0
 # cannot coexist with the torch>=2.8 that ZeroGPU requires.
 opencv-python-headless==5.0.0.93
 pillow==12.3.0
-numpy==2.4.6
+# numpy 2.4 needs Python >= 3.11, hence python_version 3.12 in README frontmatter.
+numpy>=2.4,<2.5
 
 fastapi==0.141.1
 uvicorn[standard]==0.52.3
