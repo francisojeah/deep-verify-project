@@ -108,6 +108,10 @@ class DeepfakeDetector:
         # Column 1 is p(fake); see upstream inference_torchscript.py.
         return logits.float().softmax(dim=1)[:, 1].cpu().tolist()
 
+    def crop_face(self, image: Image.Image) -> Image.Image:
+        """Largest detected face, cropped. Raises NoFaceDetectedError if absent."""
+        return self._cropper.largest_face(image).image
+
     def predict(self, image: Image.Image) -> Prediction:
         """Detect the largest face, crop it, and score it.
 
