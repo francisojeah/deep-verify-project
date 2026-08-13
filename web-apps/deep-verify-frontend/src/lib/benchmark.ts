@@ -1,9 +1,9 @@
 /**
- * Measured benchmark results.
+ * GENERATED FILE - do not edit by hand.
  *
- * Every value here is copied verbatim from a committed run in
- * web-apps/deep-verify-model-microservice/benchmarks/results/. If a run has not
- * happened, the entry stays absent and the UI says so. Nothing here is estimated.
+ * Produced by scripts/sync-benchmarks.mjs from the committed benchmark runs in
+ * web-apps/deep-verify-model-microservice/benchmarks/results/. Every number here
+ * traces to a run that is in the repository. Nothing is estimated.
  */
 
 export interface BenchmarkRun {
@@ -15,7 +15,16 @@ export interface BenchmarkRun {
   note: string;
 }
 
-export const BENCHMARKS: BenchmarkRun[] = [];
+export const BENCHMARKS: BenchmarkRun[] = [
+  {
+    "dataset": "FakeAVCeleb (community mirror)",
+    "images": 2210,
+    "rocAuc": 0.9244,
+    "prAuc": 0.942,
+    "f1": 0.8382,
+    "note": "lip-sync (Wav2Lip) and face-swap, on VoxCeleb2 sources"
+  }
+];
 
 export const BENCHMARK_SOURCE_URL =
   "https://github.com/francisojeah/deep-verify-project/tree/main/web-apps/deep-verify-model-microservice/benchmarks/results";

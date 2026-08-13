@@ -1,0 +1,51 @@
+{
+  "dataset_key": "fakeavceleb",
+  "dataset_name": "FakeAVCeleb (community mirror)",
+  "dataset_repo": "thenewsupercell/with_id_celeb-df-image-dataset",
+  "provenance": "Community re-upload listed on the Hub as Celeb-DF. Filenames such as 00001_id00220_wavtolip.mp4 are VoxCeleb2 speaker ids with Wav2Lip manipulations, which identifies it as FakeAVCeleb, not Celeb-DF. Not verified against the official FakeAVCeleb release.",
+  "manipulation_family": "lip-sync (Wav2Lip) and face-swap, on VoxCeleb2 sources",
+  "splits_note": "The detector was trained on FaceForensics++ by its authors and has never seen FakeAVCeleb (community mirror). Every split is therefore held out, and samples are drawn across all of them to reach a balanced set.",
+  "model_id": "yermandy/deepfake-detection/model.torchscript",
+  "weights_sha256": "55c54d3f4d301ce07f0d08126fc4202572d20ea6952b039bc7a949a43714157d",
+  "model_trained_by": "Yermakov et al., on FaceForensics++. Not trained in this repo.",
+  "n_images": 2210,
+  "n_skipped_no_face": 0,
+  "face_recropped": false,
+  "seed": 42,
+  "batch_size": 32,
+  "device": "mps",
+  "dtype": "torch.bfloat16",
+  "torch_version": "2.11.0",
+  "elapsed_seconds": 198.7,
+  "images_per_second": 11.12,
+  "git_sha": "6ad4ae0",
+  "run_at": "20260813T195245Z",
+  "metrics": {
+    "roc_auc": 0.924430703712045,
+    "pr_auc": 0.9420009528327149,
+    "threshold_default": 0.5,
+    "precision_at_default": 0.9495990836197021,
+    "recall_at_default": 0.7502262443438914,
+    "f1_at_default": 0.8382204246713852,
+    "accuracy_at_default": 0.8552036199095022,
+    "confusion_at_default": {
+      "tn": 1061,
+      "fp": 44,
+      "fn": 276,
+      "tp": 829
+    },
+    "best_f1": 0.8671911152244332,
+    "best_f1_threshold": 0.2712516784667969,
+    "best_f1_precision": 0.8873106060606061,
+    "best_f1_recall": 0.8479638009049774,
+    "n_fake": 1105,
+    "n_real": 1105
+  },
+  "video_level": {
+    "n_videos": 1252,
+    "n_fake_videos": 1074,
+    "n_real_videos": 178,
+    "roc_auc": 0.920924612390936,
+    "pr_auc": 0.9873591135474943
+  }
+}
