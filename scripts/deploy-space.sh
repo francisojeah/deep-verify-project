@@ -21,8 +21,11 @@ echo "Cloning space $SPACE"
 git clone --quiet "git@hf.co:spaces/$SPACE" "$WORK/space"
 
 echo "Mirroring service"
+# .gitattributes is the Space's own: it routes binaries (the YuNet .onnx) to LFS,
+# and HF rejects pushes that carry them as plain blobs. Never delete it.
 rsync -a --delete \
   --exclude '.git' \
+  --exclude '.gitattributes' \
   --exclude '.venv' \
   --exclude '__pycache__' \
   --exclude '.pytest_cache' \

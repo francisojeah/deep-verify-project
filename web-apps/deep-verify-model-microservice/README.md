@@ -10,7 +10,7 @@ pinned: false
 license: mit
 models:
   - yermandy/deepfake-detection
-short_description: Image deepfake detection using a pre-trained CLIP ViT-L/14 detector
+short_description: Deepfake detection with a pre-trained CLIP ViT-L/14 model
 ---
 
 # DeepVerify detection service
@@ -33,12 +33,12 @@ pipeline, the FastAPI service, the deployment, and the benchmark.
 
 The upstream authors report these **video-level** AUROC figures:
 
-| Dataset | AUROC |
-| --- | --- |
-| DFD | 98.0% |
+| Dataset     | AUROC |
+| ----------- | ----- |
+| DFD         | 98.0% |
 | Celeb-DF-v2 | 96.6% |
-| FFIW | 91.5% |
-| DFDC | 87.2% |
+| FFIW        | 91.5% |
+| DFDC        | 87.2% |
 
 Those are their numbers, not mine, and they are measured video-level by aggregating
 many frames. My own single-image measurements are in
@@ -83,10 +83,10 @@ docker build -t deepverify . && docker run -p 8000:8000 deepverify
 
 ## API
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `GET` | `/health` | status, model id, weights SHA-256, device, threshold |
-| `POST` | `/v1/detect` | multipart `file` -> detection result |
+| Method | Path         | Purpose                                              |
+| ------ | ------------ | ---------------------------------------------------- |
+| `GET`  | `/health`    | status, model id, weights SHA-256, device, threshold |
+| `POST` | `/v1/detect` | multipart `file` -> detection result                 |
 
 `POST /v1/detect` returns:
 
@@ -94,8 +94,8 @@ docker build -t deepverify . && docker run -p 8000:8000 deepverify
 {
   "is_deepfake": false,
   "label": "real",
-  "fake_probability": 0.0960,
-  "real_probability": 0.9040,
+  "fake_probability": 0.096,
+  "real_probability": 0.904,
   "threshold": 0.5,
   "face_box": [51, 2, 182, 166],
   "face_confidence": 0.949,
@@ -109,14 +109,14 @@ Errors: `400` unreadable image, `413` over the size limit, `422` no face detecte
 
 Environment variables, all prefixed `DEEPVERIFY_`:
 
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `DEEPVERIFY_DEVICE` | `auto` | `auto` resolves cuda, then mps, then cpu |
-| `DEEPVERIFY_DECISION_THRESHOLD` | `0.5` | uncalibrated; see limitations |
-| `DEEPVERIFY_FACE_MARGIN` | `1.3` | crop side as a multiple of the longest box edge |
-| `DEEPVERIFY_FACE_SCORE_THRESHOLD` | `0.6` | YuNet minimum confidence |
-| `DEEPVERIFY_MAX_UPLOAD_BYTES` | `10485760` | 10 MB |
-| `DEEPVERIFY_ALLOWED_ORIGINS` | `*` | comma-separated CORS origins |
+| Variable                          | Default    | Purpose                                         |
+| --------------------------------- | ---------- | ----------------------------------------------- |
+| `DEEPVERIFY_DEVICE`               | `auto`     | `auto` resolves cuda, then mps, then cpu        |
+| `DEEPVERIFY_DECISION_THRESHOLD`   | `0.5`      | uncalibrated; see limitations                   |
+| `DEEPVERIFY_FACE_MARGIN`          | `1.3`      | crop side as a multiple of the longest box edge |
+| `DEEPVERIFY_FACE_SCORE_THRESHOLD` | `0.6`      | YuNet minimum confidence                        |
+| `DEEPVERIFY_MAX_UPLOAD_BYTES`     | `10485760` | 10 MB                                           |
+| `DEEPVERIFY_ALLOWED_ORIGINS`      | `*`        | comma-separated CORS origins                    |
 
 ## Notes on two engineering choices
 
