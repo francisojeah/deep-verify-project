@@ -24,6 +24,7 @@ import { GoogleStrategy } from '@/middleware/authorization/google.strategy';
   ],
   controllers: [UserController],
   providers: [UserService],
-  exports: [MongooseModule],
+  // VerifyLogin injects UserService from the detection module.
+  exports: [MongooseModule, UserService],
 })
 export class UserModule {}

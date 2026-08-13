@@ -1,82 +1,49 @@
-import { Model } from 'mongoose';
-import { Response } from 'express';
-import { ApiTags } from '@nestjs/swagger';
-import { DetectionService } from './detections.service';
-import { InjectModel } from '@nestjs/mongoose';
-import { ConfigService } from '@nestjs/config';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import {
   Controller,
   Get,
-  Post,
-  Res,
+  NotFoundException,
   Param,
-  Version,
-  UseInterceptors,
+  Post,
+  Req,
   UploadedFile,
-  HttpStatus,
+  UseGuards,
+  UseInterceptors,
+  Version,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { DetectionResultProps } from './interfaces/detection.interfaces';
+import { VerifyLogin } from '@/middleware/authorization/verifylogin.strategy';
+import { DetectionService } from './detections.service';
+
+const MAX_BYTES = 10 * 1024 * 1024;
 
 @ApiTags('detection')
+@ApiBearerAuth()
 @Controller('detection')
+@UseGuards(VerifyLogin)
 export class DetectionController {
-  constructor(
-    private detectionService: DetectionService,
-    private configService: ConfigService,
-  ) {}
+  constructor(private detectionService: DetectionService) {}
 
   @Version('1')
   @Post('detect/:inputType')
-  @UseInterceptors(FileInterceptor('file'))
-  async detectDeepfake(
-    @UploadedFile() file: Express.Multer.File,
-    @Param('inputType') inputType: string,
-    @Res() res: any,
-  ): Promise<DetectionResultProps> {
-    try {
-      const detection = await this.detectionService.detectDeepfake(file, inputType);
-      return res.status(HttpStatus.OK).json(detection);
-    } catch (error) {
-      const errorMessage =
-        error.response?.message || error.message || 'Internal server error';
-      const errorStatus = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
-
-      return res.status(errorStatus).json({ message: errorMessage });
-    }
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: MAX_BYTES } }))
+  async detectDeepfake(@UploadedFile() file: Express.Multer.File, @Req() req: any) {
+    return this.detectionService.detectDeepfake(file, req.user._id);
   }
 
   @Version('1')
   @Get('detection-history')
-  async getDetectionHistory(@Res() res: any): Promise<DetectionResultProps[]> {
-    try {
-      const detectionHistory =
-        await this.detectionService.getDetectionHistory();
-      return res.status(HttpStatus.OK).json(detectionHistory);
-    } catch (error) {
-      const errorMessage =
-        error.response?.message || error.message || 'Internal server error';
-      const errorStatus = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
-
-      return res.status(errorStatus).json({ message: errorMessage });
-    }
+  async getDetectionHistory(@Req() req: any) {
+    return this.detectionService.getDetectionHistory(req.user._id);
   }
 
   @Version('1')
   @Get('detection/:id')
-  async getDetectionDetails(
-    @Param('id') id: string,
-    @Res() res: any,
-  ): Promise<DetectionResultProps> {
-    try {
-      const detection = await this.detectionService.getDetectionDetails(id);
-      return res.status(HttpStatus.OK).json(detection);
-    } catch (error) {
-      const errorMessage =
-        error.response?.message || error.message || 'Internal server error';
-      const errorStatus = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
-
-      return res.status(errorStatus).json({ message: errorMessage });
+  async getDetectionDetails(@Param('id') id: string, @Req() req: any) {
+    const detection = await this.detectionService.getDetectionDetails(id, req.user._id);
+    if (!detection) {
+      throw new NotFoundException('Detection not found');
     }
+    return detection;
   }
 }

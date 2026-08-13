@@ -1,65 +1,68 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  PayloadTooLargeException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { DetectionResult } from './schemas/detection.schema';
-import axios, { AxiosResponse } from 'axios';
+import { DetectionClient } from './detection-client.service';
+
+const MAX_BYTES = 10 * 1024 * 1024;
+const ALLOWED_MIME = ['image/jpeg', 'image/png'];
 
 @Injectable()
 export class DetectionService {
   constructor(
-    @InjectModel(DetectionResult.name) private detectionResultModel: Model<DetectionResult>,
+    @InjectModel(DetectionResult.name)
+    private detectionResultModel: Model<DetectionResult>,
+    private readonly client: DetectionClient,
   ) {}
 
-  async detectDeepfake(file: Express.Multer.File, inputType: string): Promise<DetectionResult> {
-    const [isDeepfake, confidence] = await this.processFile(file.buffer, inputType, file.originalname);
+  async detectDeepfake(
+    file: Express.Multer.File,
+    userId: string,
+  ): Promise<DetectionResult> {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+    if (file.size > MAX_BYTES) {
+      throw new PayloadTooLargeException('Images must be 10MB or smaller');
+    }
+    if (!ALLOWED_MIME.includes(file.mimetype)) {
+      throw new BadRequestException('Only JPG and PNG images are supported');
+    }
 
-    const detectionResult = new this.detectionResultModel({
+    const detection = await this.client.detect(file);
+
+    return this.detectionResultModel.create({
+      user: new Types.ObjectId(userId),
       fileName: file.originalname,
       mediaType: file.mimetype,
-      isDeepfake: isDeepfake,
-      confidence: `${confidence}%`,
+      isDeepfake: detection.isDeepfake,
+      fakeProbability: detection.fakeProbability,
+      threshold: detection.threshold,
+      modelId: detection.modelId,
       detectedAt: new Date(),
     });
-
-    await detectionResult.save();
-
-    return detectionResult;
   }
 
-  private async processFile(buffer: Buffer, inputType: string, fileName: string): Promise<[boolean, number]> {
-    try {
-      const response: AxiosResponse = await axios.post('http://fastapi-service/detect', {
-        file: buffer.toString('base64'), // Assuming the FastAPI service expects base64 encoded file data
-        inputType,
-      });
+  /** Scoped to the caller. Previously an unfiltered find(), which leaked every
+   *  user's uploads to anyone who asked. */
+  async getDetectionHistory(userId: string) {
+    return this.detectionResultModel
+      .find({ user: new Types.ObjectId(userId) })
+      .sort({ detectedAt: -1 })
+      .limit(100)
+      .exec();
+  }
 
-      if (response.status !== 200) {
-        throw new Error("Error processing media");
-      }
-
-      const data = response.data;
-      const visualScore = data.score;
-
-      if (visualScore === null) {
-        throw new Error("No score calculated");
-      }
-
-      const isDeepfake = visualScore > 0.5;
-      const confidence = Math.round(visualScore * 100 * 10) / 10; // Round to 1 decimal place
-
-      return [isDeepfake, confidence];
-    } catch (e) {
-      console.error(`An error occurred: ${e.message}`);
-      throw new Error('Deepfake detection failed');
+  async getDetectionDetails(id: string, userId: string) {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('Invalid detection id');
     }
-  }
-
-  async getDetectionHistory() {
-    return this.detectionResultModel.find().sort({ detectedAt: -1 }).exec();
-  }
-
-  async getDetectionDetails(id: string) {
-    console.log(id)
-    return this.detectionResultModel.findById(id).exec();
+    return this.detectionResultModel
+      .findOne({ _id: new Types.ObjectId(id), user: new Types.ObjectId(userId) })
+      .exec();
   }
 }
