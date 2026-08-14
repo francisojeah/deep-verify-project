@@ -79,11 +79,14 @@ The caveats that matter:
 
 ## Operational
 
-- The demo runs the model on CPU, at roughly one to two seconds per image. This
-  is deliberate: the free ZeroGPU tier is far faster but its quota is a few
-  minutes of GPU time per day shared across visitors, after which it refuses runs
-  entirely. The Space still sleeps when idle, so the first request after a pause
-  is slow.
+- The Space runs on ZeroGPU, whose quota is a few minutes of GPU time per day
+  shared across every visitor. Rather than surface a quota error, the app falls
+  back to scoring on CPU at roughly a second per image. A spent quota costs
+  latency, not an answer. The Space still sleeps when idle, so the first request
+  after a pause is slow.
+- One process serves both the Gradio UI and the REST API over a single detector
+  instance. That keeps them consistent, but it also means they share a failure
+  domain: if the Space is down, both are down.
 - The NestJS API is on Render's free tier, which spins down after 15 minutes and
   cold-starts in roughly 50 seconds.
 - Uploaded images are not retained after analysis.

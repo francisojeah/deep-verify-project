@@ -102,16 +102,17 @@ PYTHONPATH=. ./.venv/bin/python -m benchmarks.run_benchmark \
 ## Architecture
 
 ```
-React + Vite ──┬────────────────────────────► Hugging Face Space
-(GitHub Pages) │                                 Gradio adapter
-               │                                 └─ deepverify.detector
-               └──► NestJS API ──────────────────────────┘
-                     (Render)        detection, history, accounts
+React + Vite ──┬──────────────────────────►  Hugging Face Space
+(GitHub Pages) │                             ├─ /            Gradio UI
+               │                             ├─ /v1/detect   REST
+               │                             └─ deepverify.detector
+               └──► NestJS API ──────────────────────┘
+                     (Render)      accounts, history
                         │
                     MongoDB Atlas
 ```
 
-Three services because the ML runtime and the CRUD runtime have genuinely
+Two services because the ML runtime and the CRUD runtime have genuinely
 different shapes: one holds a 607 MB model in memory and scales on inference
 capacity, the other holds a database pool and scales on concurrent connections.
 Coupled, every auth change would redeploy the model.
@@ -119,8 +120,23 @@ Coupled, every auth change would redeploy the model.
 The honest caveat: **at this scale a single FastAPI service with SQLite would be
 simpler.** The split earns its keep once there are real users and a GPU bill.
 
-`deepverify/detector.py` is the only inference implementation. Both the FastAPI
-service and the Gradio Space import it, so the demo and the API cannot drift.
+The Space runs one process serving two interfaces — Gradio for people, FastAPI
+for machines — over a single detector instance, so the demo and the API cannot
+disagree about a score:
+
+```python
+app = gr.mount_gradio_app(api.app, demo, path="/")
+```
+
+`deepverify/detector.py` is the only inference implementation. On ZeroGPU the
+forward pass has to run inside a GPU-scoped function, so `api.run_prediction` is
+a seam the Space replaces — the route itself is identical in both deployments.
+
+| Endpoint          |                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------ |
+| `POST /v1/detect` | multipart image in, typed JSON out; `422` when no face is found, `413` over the size limit |
+| `GET /health`     | model id, weights SHA-256, resolved device, decision threshold                             |
+| `GET /docs`       | generated OpenAPI                                                                          |
 
 ## Repository layout
 
