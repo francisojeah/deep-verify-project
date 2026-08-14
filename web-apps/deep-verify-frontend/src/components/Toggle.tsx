@@ -38,7 +38,7 @@ const Toggle: React.FC = () => {
   return (
     <button
         type="button"
-        onClick={toggleDarkMode} className="flex items-center border border-neutral-300 dark:border-neutral-600 rounded-full p-0.5">
+        onClick={toggleDarkMode} className="flex items-center bg-surface-muted rounded-full p-0.5">
       <div
         className={`group flex items-center font-medium ${
           !isDarkMode ? "bg-[#F1F1F1] text-[#171717] " : "dark:bg-transparent dark:text-[#9B9B9B]"

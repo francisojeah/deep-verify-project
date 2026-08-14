@@ -7,7 +7,7 @@ export const Card: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   ...props
 }) => (
   <div
-    className={cn("rounded-xl border border-border bg-surface shadow-card", className)}
+    className={cn("rounded-xl bg-surface shadow-card", className)}
     {...props}
   >
     {children}
@@ -27,7 +27,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
   icon,
   actions,
 }) => (
-  <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
+  <div className="flex items-start justify-between gap-4 px-5 pb-1 pt-5">
     <div className="flex items-start gap-3">
       {icon && <span className="mt-0.5 text-brand">{icon}</span>}
       <div>

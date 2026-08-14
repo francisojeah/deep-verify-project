@@ -12,8 +12,8 @@
   --border-strong: 213 212 208;
   --foreground: 22 21 26;
   --muted-foreground: 107 106 115;
-  --brand: 124 58 237;
-  --brand-hover: 109 40 217;
+  --brand: 139 92 246;
+  --brand-hover: 124 58 237;
   --brand-subtle: 243 238 255;
   --success: 21 128 61;
   --success-subtle: 220 246 229;
@@ -45,8 +45,12 @@
     @apply bg-background text-foreground text-base font-normal antialiased;
   }
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     text-wrap: balance;
+    letter-spacing: -0.02em;
   }
 
   p {
@@ -63,7 +67,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
   }
@@ -79,7 +85,6 @@
 
 ::-webkit-scrollbar-thumb {
   background: rgb(var(--border-strong));
-  border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -90,83 +95,4 @@
   ::-webkit-scrollbar {
     width: 5px;
   }
-}
-
-.custom-shadow {
-  box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.25);
-}
-
-/* Marketing-page animations. Used by HeroSection and HeaderIllustration. */
-@keyframes zoom {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-}
-
-.animate-zoom {
-  animation: zoom 1.5s infinite;
-}
-
-.cube-spinner {
-  animation: spin-cube 14s ease-in-out infinite;
-  transform-style: preserve-3d;
-  transform-origin: -50% 50px;
-  position: absolute;
-  inset: 0;
-}
-
-.cube-spinner div {
-  position: absolute;
-  overflow: visible;
-  inset: 0;
-  height: 100px;
-  text-align: center;
-  background: linear-gradient(45deg, #d8b4fe, #c4b5fd 30%, #a78bfa 60%, #8b5cf6 90%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.face-1 {
-  transform: translateZ(50px);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-.face-2 {
-  transform: rotateX(120deg) translateZ(50px);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-.face-3 {
-  transform: rotateX(240deg) translateZ(50px);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-}
-
-@keyframes spin-cube {
-  0%, 25% { transform: rotateX(0deg); }
-  33%, 58% { transform: rotateX(120deg); }
-  66%, 92% { transform: rotateX(240deg); }
-  100% { transform: rotateX(1turn); }
-}
-
-@keyframes left-float-in-out {
-  0% { transform: translateY(-20%) translateX(-20%) rotate(0deg); }
-  50% { transform: translateY(5%) translateX(0) rotate(45deg); }
-  100% { transform: translateY(-20%) translateX(-20%) rotate(0deg); }
-}
-
-@keyframes right-float-in-out {
-  0% { transform: translateY(20%) translateX(20%) rotate(0deg); }
-  50% { transform: translateY(-5%) translateX(0) rotate(-45deg); }
-  100% { transform: translateY(20%) translateX(20%) rotate(0deg); }
-}
-
-.animate-left-float-in-out {
-  animation: left-float-in-out 15s ease-in-out infinite;
-}
-
-.animate-right-float-in-out {
-  animation: right-float-in-out 15s ease-in-out infinite;
 }

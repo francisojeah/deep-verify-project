@@ -1,5 +1,10 @@
 import { Suspense, createContext, lazy, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Route,
+  Routes,
+} from "react-router-dom";
 import "flowbite";
 import PageLoader from "./components/PageLoader";
 import React from "react";
@@ -87,50 +92,19 @@ const App: React.FC<Props> = ({ assetMap }) => {
                     element={
                       <Suspense fallback={<PageLoader />}>
                         {React.createElement(
-                          lazy(() => import("../src/pages/Home/LandingPage")),
-                        )}
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/home"
-                    element={
-                      <Suspense fallback={<PageLoader />}>
-                        {React.createElement(
                           lazy(() => import("../src/pages/Home/HomePage")),
                         )}
                       </Suspense>
                     }
                   />
-                  <Route
-                    path="/analyze"
-                    element={
-                      <Suspense fallback={<PageLoader />}>
-                        {React.createElement(
-                          lazy(
-                            () =>
-                              import("../src/pages/GeneralPages/AnalyzePage"),
-                          ),
-                        )}
-                      </Suspense>
-                    }
-                  />
+                  <Route path="/home" element={<Navigate to="/" replace />} />
+                  <Route path="/analyze" element={<Navigate to="/" replace />} />
                   <Route
                     path="/dashboard"
                     element={
                       <Suspense fallback={<PageLoader />}>
                         {React.createElement(
                           lazy(() => import("../src/pages/User/UserDashboard")),
-                        )}
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/game"
-                    element={
-                      <Suspense fallback={<PageLoader />}>
-                        {React.createElement(
-                          lazy(() => import("../src/pages/GeneralPages/Game")),
                         )}
                       </Suspense>
                     }
@@ -209,19 +183,6 @@ const App: React.FC<Props> = ({ assetMap }) => {
                       <Suspense fallback={<PageLoader />}>
                         {React.createElement(
                           lazy(() => import("../src/pages/GeneralPages/About")),
-                        )}
-                      </Suspense>
-                    }
-                  />
-                  <Route
-                    path="/contact"
-                    element={
-                      <Suspense fallback={<PageLoader />}>
-                        {React.createElement(
-                          lazy(
-                            () =>
-                              import("../src/pages/GeneralPages/ContactPage"),
-                          ),
                         )}
                       </Suspense>
                     }

@@ -76,13 +76,13 @@ const DetectionResultPanel: React.FC<Props> = ({ result, loading }) => (
         </div>
 
         <dl className="grid grid-cols-2 gap-3 text-sm">
-          <div className="rounded-lg border border-border px-3 py-2">
+          <div className="rounded-lg bg-surface-muted px-3 py-2">
             <dt className="text-xs text-muted-foreground">Authentic</dt>
             <dd className="mt-0.5 font-medium tabular-nums text-foreground">
               {percent(result.realProbability)}
             </dd>
           </div>
-          <div className="rounded-lg border border-border px-3 py-2">
+          <div className="rounded-lg bg-surface-muted px-3 py-2">
             <dt className="text-xs text-muted-foreground">
               Face detected with
             </dt>
@@ -95,7 +95,7 @@ const DetectionResultPanel: React.FC<Props> = ({ result, loading }) => (
         </dl>
 
         {BENCHMARKS.length > 0 && (
-          <div className="rounded-lg border border-border bg-surface-muted px-4 py-3">
+          <div className="rounded-lg bg-surface-muted px-4 py-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Measured on
             </p>

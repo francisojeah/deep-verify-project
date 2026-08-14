@@ -71,7 +71,7 @@ function ResetPassword() {
       <>
         <MetaTags />
         <div className="flex flex-col w-full md:w-[38rem] mt-36 px-4 mx-auto">
-          <div className="mx-auto flex flex-col justify-center gap-8 p-8 w-full rounded-2xl border border-neutral-300 dark:border-neutral-500">
+          <div className="mx-auto flex flex-col justify-center gap-8 p-8 w-full rounded-2xl bg-surface">
             <div className="text-center flex flex-col gap-4 mt-4 mb-4">
               <h1 className="text-lg text-black dark:text-white font-bold">
                 Update your password
@@ -116,7 +116,7 @@ function ResetPassword() {
                         placeholder={
                           showPassword ? "Enter new password" : "********"
                         }
-                        className="w-full px-4 py-3 text-black dark:text-white bg-transparent border border-neutral-300 dark:border-neutral-500 rounded-lg mt-1 focus:border-custom-primary"
+                        className="w-full px-4 py-3 text-black dark:text-white bg-surface-muted rounded-lg mt-1"
                       />
                       <button
                         type="button"
@@ -150,7 +150,7 @@ function ResetPassword() {
                             ? "Confirm your password"
                             : "********"
                         }
-                        className="w-full px-4 py-3 text-black dark:text-white bg-transparent border border-neutral-300 dark:border-neutral-500 rounded-lg mt-1 focus:border-custom-primary"
+                        className="w-full px-4 py-3 text-black dark:text-white bg-surface-muted rounded-lg mt-1"
                       />
                       <button
                         type="button"
@@ -179,9 +179,9 @@ function ResetPassword() {
                       className={`
                           ${
                             userSlice?.reqResettingPass
-                              ? "bg-white border-custom-primary"
-                              : "bg-custom-primary border-white"
-                          }  font-bold rounded-lg shadow-md text-white w-full h-[2.5rem] justify-center items-center hover:bg-white hover:border hover:border-custom-primary hover:text-custom-primary`}
+                              ? "bg-white"
+                              : "bg-brand"
+                          }  font-bold rounded-lg shadow-md text-white w-full h-[2.5rem] justify-center items-center hover:bg-white hover:text-brand`}
                       disabled={userSlice?.reqResettingPass}
                     >
                       {userSlice?.reqResettingPass ? (

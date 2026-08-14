@@ -25,7 +25,7 @@ const Field: React.FC<{ label: string; children: React.ReactNode }> = ({
   label,
   children,
 }) => (
-  <div className="rounded-lg border border-border px-4 py-3">
+  <div className="rounded-lg bg-surface-muted px-4 py-3">
     <dt className="text-xs text-muted-foreground">{label}</dt>
     <dd className="mt-1 truncate text-sm font-medium text-foreground">
       {children}

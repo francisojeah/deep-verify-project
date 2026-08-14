@@ -1,180 +1,121 @@
 import { Link } from "react-router-dom";
-import HeaderIllustration from "../../components/HeaderIllustration";
-import ButtonComponent from "../../components/ButtonComponent";
+import { FiArrowUpRight } from "react-icons/fi";
+
 import MetaTags from "../../components/MetaTags";
 import PageLayout from "../../components/PageLayout";
-import { FiArrowUpRight } from "react-icons/fi";
-import { FaUser } from "react-icons/fa";
+import Button from "../../components/ui/Button";
+import { BENCHMARKS } from "../../lib/benchmark";
 
-const AboutPage = () => {
-  return (
-    <PageLayout>
-      <>
-        <MetaTags />
-        <div className="w-full flex flex-col gap-24 text-black dark:text-white max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Introduction Section */}
-          <div className="text-center flex flex-col mb-12 gap-8">
-            <p className="text-center font-bold dark:text-white text-4xl leading-tight lg:text-7xl">
-              Ensuring <span className="text-custom-primary">Trust</span> in
-              Political Media
-            </p>
-            <p className="mt-4 text-xl lg:text-2xl leading-relaxed text-black dark:text-white opacity-70">
-              Discover who we are, our mission, and our commitment to preserving
-              media integrity in the political sphere.
-            </p>
-          </div>
+const REPO_URL = "https://github.com/francisojeah/deep-verify-project";
 
-          {/* Vision Section */}
-          <div className="text-center mb-12 flex flex-col gap-2">
-            <HeaderIllustration text={"Vision"} />
+// Read from the committed runs rather than typed in, so the prose cannot drift
+// from the data it is describing.
+const ranked = [...BENCHMARKS].sort((a, b) => b.rocAuc - a.rocAuc);
+const best = ranked[0];
+const worst = ranked[ranked.length - 1];
+const percent = (value: number) => `${(value * 100).toFixed(1)}%`;
 
-            <p className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Our <span className="text-custom-primary">Vision</span>
-            </p>
-            <p className="mt-4 md:text-lg leading-relaxed text-black dark:text-white opacity-70">
-              At DeepVerify, we envision a world where political media is free
-              from manipulation, ensuring that citizens can make informed
-              decisions based on genuine information. Our goal is to set a new
-              standard for media authenticity in the political landscape.
-            </p>
-          </div>
+const Section: React.FC<{ title: string; children: React.ReactNode }> = ({
+  title,
+  children,
+}) => (
+  <section className="mt-16 max-w-3xl">
+    <h2 className="font-display text-2xl font-bold text-foreground">{title}</h2>
+    <div className="mt-4 space-y-4 leading-relaxed text-muted-foreground">
+      {children}
+    </div>
+  </section>
+);
 
-          {/* Mission Section */}
-          <div className="text-center mb-12 flex flex-col gap-2">
-            <HeaderIllustration text={"Mission"} />
+const AboutPage = () => (
+  <PageLayout>
+    <MetaTags title="About DeepVerify" />
 
-            <p className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Our <span className="text-custom-primary">Mission</span>
-            </p>
-            <p className="mt-4 md:text-lg leading-relaxed text-black dark:text-white opacity-70">
-              Our mission is to empower journalists, political analysts, and the
-              public with robust tools to detect and combat deepfakes. Through
-              innovative AI technology and dedicated research, we strive to
-              safeguard the integrity of political discourse.
-            </p>
-          </div>
+    <div className="mx-auto w-full max-w-6xl">
+      <header className="max-w-3xl">
+        <h1 className="font-display text-4xl font-bold leading-[1.1] text-foreground sm:text-5xl">
+          Why this exists
+        </h1>
+        <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
+          DeepVerify began as a final-year project on verifying political media,
+          and became a working study of how far a deepfake detector can actually
+          be trusted.
+        </p>
+      </header>
 
-          {/* Values Section */}
-          <div className="text-center mb-12 flex flex-col gap-2">
-            <HeaderIllustration text={"Values"} />
+      <Section title="What it does today">
+        <p>
+          It detects manipulation in a face in a still image. That is a broader
+          problem than political media and a narrower one than "deepfakes" — it
+          scores faces, not scenes, not video, not audio.
+        </p>
+        <p>
+          The political specialisation the project set out to build is{" "}
+          <strong className="font-semibold text-foreground">not done</strong>.
+          Doing it honestly means evaluating on political deepfakes that
+          actually circulated, which is a curation and access problem rather
+          than a modelling one. That is the next piece of work, and until it is
+          finished the product claims only what it has measured.
+        </p>
+      </Section>
 
-            <p className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Our <span className="text-custom-primary">Values</span>
-            </p>
-            <div className="grid gap-8 sm:grid-cols-1 lg:grid-cols-3">
-              <div className="p-6 rounded-2xl transition-transform transform hover:scale-105 border border-neutral-300 dark:border-neutral-500">
-                <p className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
-                  Integrity and Transparency
-                </p>
-                <p className="text-black dark:text-white opacity-70">
-                  We are committed to maintaining the highest standards of
-                  honesty and openness in our technology and practices.
-                </p>
-              </div>
-              <div className="p-6 rounded-2xl transition-transform transform hover:scale-105 border border-neutral-300 dark:border-neutral-500">
-                <p className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
-                  Innovation and Excellence
-                </p>
-                <p className="text-black dark:text-white opacity-70">
-                  Every performance figure we publish comes from a benchmark run
-                  we have committed, including the ones that are unflattering.
-                </p>
-              </div>
-              <div className="p-6 rounded-2xl transition-transform transform hover:scale-105 border border-neutral-300 dark:border-neutral-500">
-                <p className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
-                  Empowerment and Education
-                </p>
-                <p className="text-black dark:text-white opacity-70">
-                  We are dedicated to providing tools and knowledge that empower
-                  users to effectively detect and respond to media manipulation.
-                </p>
-              </div>
-            </div>
-          </div>
+      <Section title="The part that turned out to be interesting">
+        <p>
+          The obvious question about a detector is "how accurate is it?", and
+          the honest answer is that the question is underspecified. Measured on
+          one family of manipulations it reaches {percent(best.rocAuc)} ROC-AUC.
+          Same model, same code, same seed, a different family:{" "}
+          {percent(worst.rocAuc)}.
+        </p>
+        <p>
+          A single headline accuracy figure describes the test set as much as
+          the model. So both runs are published, including the unflattering one,
+          and the raw output for each is in the repository.
+        </p>
+      </Section>
 
-          <div className="text-center mb-12 flex flex-col gap-2">
-            <p className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              The DeepVerify <span className="text-custom-primary">Team</span>
-            </p>
+      <Section title="Where the model comes from">
+        <p>
+          The detector is{" "}
+          <a
+            href="https://huggingface.co/yermandy/deepfake-detection"
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium text-brand underline underline-offset-2"
+          >
+            yermandy/deepfake-detection
+          </a>
+          , a CLIP ViT-L/14 encoder with LN-tuning, trained on FaceForensics++
+          by Yermakov et al. and published under MIT. Those weights are used
+          unmodified.
+        </p>
+        <p>
+          Built around them here: the face detection and cropping, the inference
+          service, the REST API, the benchmark harness, the client, and the
+          deployment.
+        </p>
+      </Section>
 
-            <div className="grid gap-8 md:grid-cols-2 mt-8">
-              {/* Francis Okocha-Ojeah */}
-              <div className="flex flex-col gap-6 px-6 py-12 rounded-2xl border border-neutral-300 dark:border-neutral-500">
-                <FaUser className="text-5xl w-full text-gray-900 dark:text-white" />
-                <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-                  Francis Okocha-Ojeah
-                </p>
-                <p className="text-black dark:text-white opacity-70">
-                  Computer Science Student
-                </p>
-              </div>
+      <Section title="Credits">
+        <p>
+          Built by Francis Okocha-Ojeah, Computer Science, Pan-Atlantic
+          University, supervised by Prof. Kingsley Ukaoha.
+        </p>
+      </Section>
 
-              {/* Prof. Kingsley Ukaoha */}
-              <div className="flex flex-col gap-6 px-6 py-12 rounded-2xl border border-neutral-300 dark:border-neutral-500">
-                <FaUser className="text-5xl w-full text-gray-900 dark:text-white" />
-                <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-                  Prof. Kingsley Ukaoha
-                </p>
-                <p className="text-black dark:text-white opacity-70">
-                  Project Supervisor
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Project Context Section */}
-          <div className="text-center mb-12 flex flex-col gap-2">
-            <p className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Project <span className="text-custom-primary">Context</span>
-            </p>
-            <p className="mt-4 md:text-lg leading-relaxed text-black dark:text-white opacity-70">
-              DeepVerify is a final year project developed by Francis
-              Okocha-Ojeah, a Computer Science student at Pan-Atlantic
-              University. Guided by Prof. Kingsley Ukaoha, this project explores
-              advanced techniques in deepfake detection specifically for
-              political media. It aims to address challenges related to the
-              authenticity of digital content in political contexts through
-              sophisticated AI methodologies.
-            </p>
-          </div>
-
-          {/* Acknowledgment Section */}
-          <div className="text-center mb-12 flex flex-col gap-2">
-            <p className="text-4xl font-bold text-custom-primary mb-4">
-              Acknowledgment
-            </p>
-            <p className="mt-4 md:text-lg leading-relaxed text-black dark:text-white opacity-70">
-              I would like to express my heartfelt gratitude to God for His
-              unwavering guidance throughout the development of DeepVerify.
-              Special thanks to Prof. Kingsley Ukaoha for his invaluable
-              supervision and support. I am deeply grateful to my family for
-              their constant encouragement and belief in my work. The School of
-              Science and Technology at Pan-Atlantic University provided
-              essential resources and a supportive environment. My peers and
-              colleagues also deserve thanks for their feedback and
-              contributions to this project.
-            </p>
-          </div>
-
-          {/* Contact Button Section */}
-          <section className="w-full max-w-6xl mx-auto py-20 md:px-8 p-4 text-black dark:text-white text-center rounded-2xl border border-medium-purple-400 bg-medium-purple-50 dark:bg-medium-purple-950 md:dark:bg-opacity-70  relative overflow-hidden">
-            <p className="text-3xl font-bold">Contact Us</p>
-            <p className="mt-4 md:text-lg max-w-4xl mx-auto">
-              Have questions or feedback about our deepfake detection solutions?
-              Reach out to us!
-            </p>
-            <div className="mt-8 flex justify-center">
-              <Link to="/contact">
-                <ButtonComponent>
-                  Contact Us <FiArrowUpRight />
-                </ButtonComponent>
-              </Link>
-            </div>
-          </section>
-        </div>
-      </>
-    </PageLayout>
-  );
-};
+      <div className="mt-16 flex flex-wrap gap-4">
+        <Link to="/">
+          <Button>Analyse an image</Button>
+        </Link>
+        <a href={REPO_URL} target="_blank" rel="noreferrer">
+          <Button variant="secondary">
+            Read the source
+            <FiArrowUpRight aria-hidden />
+          </Button>
+        </a>
+      </div>
+    </div>
+  </PageLayout>
+);
 
 export default AboutPage;

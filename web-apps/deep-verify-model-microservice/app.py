@@ -1,32 +1,45 @@
-"""Gradio front end for the DeepVerify detection service.
+"""Hugging Face Space entry point.
 
-Deployment adapter only. All inference lives in deepverify.detector, which the
-FastAPI service in deepverify.api imports from the same module.
+One deployment, two interfaces: the REST API from deepverify.api for machines,
+and a Gradio UI for people. Both call the same detector instance, so the demo
+and the API cannot disagree.
+
+Inference itself lives in deepverify.detector. Nothing is trained here.
 """
 
 import json
 import os
 from pathlib import Path
 
-import gradio as gr
+# Must precede any deepverify import: settings are cached on first read, and on
+# ZeroGPU the model has to be built on cuda.
+ON_ZERO_GPU = os.environ.get("SPACES_ZERO_GPU", "").lower() in {"1", "true"}
+if ON_ZERO_GPU:
+    os.environ.setdefault("DEEPVERIFY_DEVICE", "cuda")
 
-from deepverify.config import Settings
-from deepverify.detector import DeepfakeDetector, NoFaceDetectedError
+import gradio as gr  # noqa: E402
+import uvicorn  # noqa: E402
+from PIL import Image  # noqa: E402
+
+from deepverify import api  # noqa: E402
+from deepverify.config import Settings  # noqa: E402
+from deepverify.detector import (  # noqa: E402
+    DeepfakeDetector,
+    NoFaceDetectedError,
+    Prediction,
+    get_detector,
+)
 
 MODEL_URL = "https://huggingface.co/yermandy/deepfake-detection"
 CODE_URL = "https://github.com/francisojeah/deep-verify-project"
 RESULTS = Path(__file__).parent / "benchmarks" / "results" / "latest.json"
 
-# Set by the platform only on ZeroGPU hardware. Importing `spaces` is not a
-# reliable signal: the package installs everywhere.
-ON_ZERO_GPU = os.environ.get("SPACES_ZERO_GPU", "").lower() in {"1", "true"}
-
-detector = DeepfakeDetector(Settings(device="cuda" if ON_ZERO_GPU else "auto"))
+detector = get_detector()
 
 _cpu_detector: DeepfakeDetector | None = None
 
 
-def _score(face) -> float:
+def _score(face: Image.Image) -> float:
     return detector.score_faces([face])[0]
 
 
@@ -37,11 +50,11 @@ if ON_ZERO_GPU:
     # the window small stretches the shared daily quota.
     _score = spaces.GPU(duration=15)(_score)
 
-    def _score_on_cpu(face) -> float:
+    def _score_on_cpu(face: Image.Image) -> float:
         """Fallback for when the shared GPU quota is spent.
 
-        Built lazily so the second copy of the weights only costs memory if it
-        is actually needed. A slower answer beats an error.
+        Built lazily so a second copy of the weights only costs memory if it is
+        actually needed. A slower answer beats an error.
         """
         global _cpu_detector
         if _cpu_detector is None:
@@ -49,13 +62,30 @@ if ON_ZERO_GPU:
         return _cpu_detector.score_faces([face])[0]
 
 
-def score_face(face) -> float:
+def score_face(face: Image.Image) -> float:
     if not ON_ZERO_GPU:
         return _score(face)
     try:
         return _score(face)
     except Exception:  # quota spent or queue timeout - answer anyway
         return _score_on_cpu(face)
+
+
+def predict(image: Image.Image) -> Prediction:
+    """Crop on CPU, score inside the GPU window. Raises NoFaceDetectedError."""
+    face = detector.crop_face(image)
+    fake = score_face(face.image)
+    return Prediction(
+        fake_probability=fake,
+        real_probability=1.0 - fake,
+        threshold=detector.threshold,
+        face_box=face.box,
+        face_confidence=face.confidence,
+    )
+
+
+# The REST route calls this; see deepverify.api.run_prediction.
+api.run_prediction = predict
 
 
 def _measured_performance() -> str:
@@ -92,33 +122,30 @@ def analyse(image):
     if image is None:
         raise gr.Error("Upload an image first.")
 
-    # Face detection runs outside any GPU window: it is cheap, and it keeps the
-    # no-face case a plain exception rather than one crossing a process boundary.
     try:
-        face = detector.crop_face(image)
+        prediction = predict(image)
     except NoFaceDetectedError:
         raise gr.Error(
             "No face detected. This model scores face crops, so a score here would "
             "be meaningless - it returns nothing rather than guess."
         )
 
-    fake = score_face(face.image)
-    threshold = detector.threshold
-    scores = {"Manipulated": fake, "Authentic": 1.0 - fake}
+    fake = prediction.fake_probability
+    scores = {"Manipulated": fake, "Authentic": prediction.real_probability}
     verdict = (
-        f"### {'Likely manipulated' if fake >= threshold else 'No manipulation detected'}\n\n"
+        f"### {'Likely manipulated' if prediction.is_deepfake else 'No manipulation detected'}\n\n"
         f"**{fake * 100:.1f}%** likelihood of manipulation, at a decision threshold of "
-        f"{threshold * 100:.0f}%.\n\n"
-        f"Face located at {face.box}, detector confidence {face.confidence * 100:.1f}%."
+        f"{prediction.threshold * 100:.0f}%.\n\n"
+        f"Face located at {prediction.face_box}, detector confidence "
+        f"{prediction.face_confidence * 100:.1f}%."
     )
-    # Third output so API clients read fields rather than parsing the prose above.
     details = {
         "fake_probability": fake,
-        "real_probability": 1.0 - fake,
-        "threshold": threshold,
-        "is_deepfake": fake >= threshold,
-        "face_box": list(face.box),
-        "face_confidence": face.confidence,
+        "real_probability": prediction.real_probability,
+        "threshold": prediction.threshold,
+        "is_deepfake": prediction.is_deepfake,
+        "face_box": list(prediction.face_box),
+        "face_confidence": prediction.face_confidence,
         "model_id": detector.model_id,
     }
     return scores, verdict, details
@@ -137,6 +164,9 @@ with LN-tuning, trained on FaceForensics++ by Yermakov et al. and released under
 This project runs those published weights unmodified; it does not train them. What it
 adds is the face detection and cropping, the inference pipeline, the API, the
 benchmarks below, and this deployment. [Source]({CODE_URL})
+
+**API** — the same detector is available over HTTP: `POST /v1/detect` with an image,
+`GET /health` for the model id and weights checksum. See `/docs`.
 
 **Scope** — Images only, one face per image, single frame. Without a detectable face
 the service returns an error rather than a score.
@@ -180,5 +210,8 @@ with gr.Blocks(title="DeepVerify", theme=gr.themes.Soft()) as demo:
         api_name="detect",
     )
 
+# Gradio at the root, the REST API on its own paths, one process.
+app = gr.mount_gradio_app(api.app, demo, path="/")
+
 if __name__ == "__main__":
-    demo.launch()
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 7860)))

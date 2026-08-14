@@ -39,7 +39,7 @@ const SideMenu = ({ isMenuOpen, toggleMenu }:any) => {
     <div
       className={`relative h-full ${
         isMenuOpen ? "w-60" : "w-20"
-      } transition-all duration-300 bg-medium-purple-600 rounded-3xl py-8`}
+      } transition-all duration-300 bg-brand rounded-3xl py-8`}
     >
       <button
         onClick={toggleMenu}

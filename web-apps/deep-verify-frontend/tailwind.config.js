@@ -10,7 +10,11 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Montserrat", ...defaultTheme.fontFamily.sans],
+        // Inter carries the interface, where most type sits at 13-14px.
+        // Montserrat is display only - it is too wide and too low in x-height
+        // to stay legible at UI sizes.
+        sans: ["Inter", ...defaultTheme.fontFamily.sans],
+        display: ["Montserrat", ...defaultTheme.fontFamily.sans],
       },
       colors: {
         background: token("background"),
@@ -40,13 +44,24 @@ export default {
         ring: token("ring"),
       },
       borderRadius: {
-        // One scale: controls use lg, cards use xl. Nothing else.
-        lg: "0.625rem",
-        xl: "0.875rem",
+        // Square by design. Every size collapses to zero so nothing can
+        // reintroduce a corner; `circle` stays for elements that are round
+        // shapes rather than rounded rectangles - the spinner and status dot.
+        none: "0",
+        sm: "0",
+        DEFAULT: "0",
+        md: "0",
+        lg: "0",
+        xl: "0",
+        "2xl": "0",
+        "3xl": "0",
+        full: "0",
+        circle: "9999px",
       },
       boxShadow: {
-        card: "0 1px 2px rgb(16 15 20 / 0.04), 0 8px 24px -12px rgb(16 15 20 / 0.12)",
-        custom: "0px 4px 20px 0px rgba(0, 0, 0, 0.25)",
+        card: "0 1px 2px rgb(16 15 20 / 0.04)",
+        custom: "0 1px 2px rgb(16 15 20 / 0.06)",
+        none: "none",
       },
       transitionTimingFunction: {
         brand: "cubic-bezier(0.22, 1, 0.36, 1)",

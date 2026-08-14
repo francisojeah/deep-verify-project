@@ -77,7 +77,7 @@ const DetectionHistoryPage: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
+                  <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground">
                     {columns.map((column) => (
                       <th key={column} className="px-5 py-3 font-medium">
                         {column}
@@ -85,7 +85,7 @@ const DetectionHistoryPage: React.FC = () => {
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border">
+                <tbody>
                   {history.map((item) => (
                     <tr
                       key={item._id}

@@ -100,7 +100,7 @@ const ImageAnalyser: React.FC<Props> = ({ onAnalysed }) => {
         <CardBody>
           <form onSubmit={handleSubmit} className="space-y-4">
             {preview ? (
-              <div className="relative overflow-hidden rounded-lg border border-border">
+              <div className="relative overflow-hidden rounded-lg bg-surface-muted">
                 <img
                   src={preview}
                   alt="Selected upload"
@@ -118,10 +118,10 @@ const ImageAnalyser: React.FC<Props> = ({ onAnalysed }) => {
             ) : (
               <div
                 {...getRootProps()}
-                className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-12 text-center transition-colors ${
+                className={`flex cursor-pointer flex-col items-center justify-center rounded-lg px-6 py-14 text-center transition-colors ${
                   isDragActive
-                    ? "border-brand bg-brand-subtle"
-                    : "border-border-strong hover:border-brand hover:bg-surface-muted"
+                    ? "bg-brand-subtle"
+                    : "bg-surface-muted hover:bg-border"
                 }`}
               >
                 <input {...getInputProps()} />

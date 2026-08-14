@@ -93,7 +93,7 @@ const Login = () => {
           pageUrl={window.location.href}
         />
         <div className="flex justify-center h-screen items-center w-full px-4">
-          <div className="max-w-xl w-full items-center rounded-2xl border border-neutral-300 dark:border-neutral-500">
+          <div className="max-w-xl w-full items-center rounded-2xl bg-surface">
             <div className="flex w-full  justify-center">
               <div className="flex flex-col justify-center w-full gap-8 p-8 text-black dark:text-white">
                 <div className="flex w-full justify-between items-center">
@@ -131,7 +131,7 @@ const Login = () => {
                         <div className="flex flex-col gap-2">
                           <p className="text-black dark:text-white opacity-70 text-sm">Email</p>
                           <input
-                            className=" flex shadow-none px-4 py-3 bg-transparent rounded-lg border border-neutral-300 dark:border-neutral-500 self-stretch gap-2 items-center focus:border-custom-primary"
+                            className=" flex shadow-none px-4 py-3 bg-surface-muted rounded-lg self-stretch gap-2 items-center"
                             type="email"
                             onChange={(e) =>
                               setFieldValue("email", e.target.value)
@@ -148,13 +148,13 @@ const Login = () => {
                           <div className="flex justify-between w-full">
                           <p className="text-black dark:text-white opacity-70 text-sm">Password</p>
                             <Link to={"/forgot-password"}>
-                            <p className="flex font-bold text-sm justify-end transition-all duration-200 ease-in-out hover:text-custom-primary">
+                            <p className="flex font-bold text-sm justify-end transition-all duration-200 ease-in-out hover:text-brand">
                               Forgot Password?{" "}
                             </p>
                           </Link></div>
                           <div className="relative">
                             <input
-                              className=" flex shadow-none px-4 py-3 bg-transparent rounded-lg border border-neutral-300 dark:border-neutral-500 self-stretch w-full gap-2 items-center focus:border-custom-primary"
+                              className=" flex shadow-none px-4 py-3 bg-surface-muted rounded-lg self-stretch w-full gap-2 items-center"
                               type={showPassword ? "text" : "password"}
                               value={values["password"]}
                               placeholder={
@@ -192,9 +192,9 @@ const Login = () => {
                         <button
                           className={`${
                             userSlice?.isLoggin
-                              ? "bg-white border-custom-primary"
-                              : "bg-custom-primary border-white"
-                          }  font-bold rounded-xl shadow-md text-white w-full h-[2.5rem] justify-center items-center hover:bg-white hover:border hover:border-custom-primary hover:text-custom-primary`}
+                              ? "bg-white"
+                              : "bg-brand"
+                          }  font-bold rounded-xl shadow-md text-white w-full h-[2.5rem] justify-center items-center hover:bg-white hover:text-brand`}
                           type="submit"
                           disabled={userSlice?.isLoggin}
                         >
@@ -202,7 +202,7 @@ const Login = () => {
                         </button>
                         <div className="w-full flex flex-col gap-4">
                           <Link to={"/signup"}>
-                            <p className="font-medium text-sm flex text-center w-full hover:text-custom-primary cursor-pointer hover:underline">
+                            <p className="font-medium text-sm flex text-center w-full hover:text-brand cursor-pointer hover:underline">
                               Dont have an account? Sign up
                             </p>
                           </Link>
@@ -211,7 +211,7 @@ const Login = () => {
                           </p>
                           <button
                             // onClick={() => googleLogin()}
-                            className="flex items-center bg-white border border-gray-300 shadow-md justify-center gap-4 rounded-xl py-3 px-6 text-sm font-medium text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 "
+                            className="flex items-center bg-white shadow-card justify-center gap-4 rounded-xl py-3 px-6 text-sm font-medium text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 "
                           >
                             <FcGoogle size={20} />
                             <span>Continue with Google</span>

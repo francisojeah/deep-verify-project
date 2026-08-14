@@ -105,7 +105,7 @@ const SignUp = () => {
         />
         <div className="flex justify-center items-center h-screen w-full px-4">
           
-            <div className="max-w-xl w-full flex justify-center items-center rounded-2xl border border-neutral-300 dark:border-neutral-500">
+            <div className="max-w-xl w-full flex justify-center items-center rounded-2xl bg-surface">
             <div className="flex w-full  justify-center">
               <div className="flex flex-col justify-center w-full gap-8 p-8 text-black dark:text-white">
                 <div className="flex w-full justify-between items-center">
@@ -146,7 +146,7 @@ const SignUp = () => {
                         <div className="flex flex-col gap-2">
                           <p className="text-black dark:text-white opacity-70 text-sm">Firstname</p>
                           <input
-                            className=" flex shadow-none px-4 py-3 bg-transparent rounded-lg border border-neutral-300 dark:border-neutral-500 self-stretch gap-2 items-center focus:border-custom-primary"
+                            className=" flex shadow-none px-4 py-3 bg-surface-muted rounded-lg self-stretch gap-2 items-center"
                             type="text"
                             onChange={(e) =>
                               setFieldValue("firstname", e.target.value)
@@ -162,7 +162,7 @@ const SignUp = () => {
                         <div className="flex flex-col gap-2">
                           <p className="text-black dark:text-white opacity-70 text-sm">Lastname</p>
                           <input
-                            className=" flex shadow-none px-4 py-3 bg-transparent rounded-lg border border-neutral-300 dark:border-neutral-500 self-stretch gap-2 items-center focus:border-custom-primary"
+                            className=" flex shadow-none px-4 py-3 bg-surface-muted rounded-lg self-stretch gap-2 items-center"
                             type="text"
                             onChange={(e) =>
                               setFieldValue("lastname", e.target.value)
@@ -179,7 +179,7 @@ const SignUp = () => {
                         <div className="flex flex-col gap-2">
                           <p className="text-black dark:text-white opacity-70 text-sm">Email</p>
                           <input
-                            className=" flex shadow-none px-4 py-3 bg-transparent rounded-lg border border-neutral-300 dark:border-neutral-500 self-stretch gap-2 items-center focus:border-custom-primary"
+                            className=" flex shadow-none px-4 py-3 bg-surface-muted rounded-lg self-stretch gap-2 items-center"
                             type="email"
                             onChange={(e) =>
                               setFieldValue("email", e.target.value)
@@ -196,7 +196,7 @@ const SignUp = () => {
                           <p className="text-black dark:text-white opacity-70 text-sm">Password</p>
                           <div className="relative">
                             <input
-                              className=" flex shadow-none px-4 py-3 bg-transparent rounded-lg border border-neutral-300 dark:border-neutral-500 self-stretch w-full gap-2 items-center focus:border-custom-primary"
+                              className=" flex shadow-none px-4 py-3 bg-surface-muted rounded-lg self-stretch w-full gap-2 items-center"
                               type={showPassword ? "text" : "password"}
                               value={values["password"]}
                               placeholder={
@@ -238,7 +238,7 @@ const SignUp = () => {
                           </p>
                           <div className="relative">
                             <input
-                              className=" flex shadow-none px-4 py-3 bg-transparent rounded-lg border border-neutral-300 dark:border-neutral-500 self-stretch w-full gap-2 items-center focus:border-custom-primary"
+                              className=" flex shadow-none px-4 py-3 bg-surface-muted rounded-lg self-stretch w-full gap-2 items-center"
                               type={showConfirmPassword ? "text" : "password"}
                               value={values["cpassword"]}
                               placeholder={
@@ -279,9 +279,9 @@ const SignUp = () => {
                         <button
                           className={`${
                             userSlice?.isRegistering
-                              ? "bg-white border-custom-primary"
-                              : "bg-custom-primary border-white"
-                          }  font-bold rounded-xl shadow-md text-white w-full h-[2.5rem] justify-center items-center hover:bg-white hover:border hover:border-custom-primary hover:text-custom-primary`}
+                              ? "bg-white"
+                              : "bg-brand"
+                          }  font-bold rounded-xl shadow-md text-white w-full h-[2.5rem] justify-center items-center hover:bg-white hover:text-brand`}
                           type="submit"
                           disabled={userSlice?.isRegistering}
                         >
@@ -293,7 +293,7 @@ const SignUp = () => {
                         </button>
                         <div className="w-full flex flex-col gap-3">
                           <Link to={"/login"}>
-                            <p className="font-medium text-sm flex text-center w-full hover:text-custom-primary curor-pointer hover:underline">
+                            <p className="font-medium text-sm flex text-center w-full hover:text-brand curor-pointer hover:underline">
                               Already have an account? Login
                             </p>
                           </Link>
@@ -302,7 +302,7 @@ const SignUp = () => {
                           </p>
                           <button
                             // onClick={() => googleLogin()}
-                            className="flex items-center bg-white border border-gray-300 shadow-md justify-center gap-4 rounded-lg px-6 py-3 text-sm font-medium text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 "
+                            className="flex items-center bg-white shadow-card justify-center gap-4 rounded-lg px-6 py-3 text-sm font-medium text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 "
                           >
                             <FcGoogle size={20} />
                             <span>Continue with Google</span>

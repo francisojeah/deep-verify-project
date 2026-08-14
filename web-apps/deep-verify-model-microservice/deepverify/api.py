@@ -6,7 +6,7 @@ from PIL import Image, UnidentifiedImageError
 from pydantic import BaseModel
 
 from .config import get_settings
-from .detector import NoFaceDetectedError, get_detector
+from .detector import NoFaceDetectedError, Prediction, get_detector
 
 settings = get_settings()
 
@@ -25,6 +25,16 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
+
+def run_prediction(image: Image.Image) -> Prediction:
+    """Detect and score, in-process.
+
+    A seam, not indirection: on ZeroGPU the forward pass has to happen inside a
+    GPU-scoped function, so the Space replaces this with its own implementation
+    and the route below stays identical in both deployments.
+    """
+    return get_detector().predict(image)
 
 
 class Health(BaseModel):
@@ -75,7 +85,7 @@ async def detect(file: UploadFile = File(...)) -> DetectionResponse:
 
     detector = get_detector()
     try:
-        prediction = detector.predict(image)
+        prediction = run_prediction(image)
     except NoFaceDetectedError:
         raise HTTPException(
             status_code=422,

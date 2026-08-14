@@ -95,14 +95,14 @@ const UserDashboard: React.FC = () => {
                   <div className="overflow-x-auto">
                     <table className="min-w-full text-sm">
                       <thead>
-                        <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
+                        <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground">
                           <th className="px-5 py-3 font-medium">File</th>
                           <th className="px-5 py-3 font-medium">Verdict</th>
                           <th className="px-5 py-3 font-medium">Manipulated</th>
                           <th className="px-5 py-3 font-medium">When</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-border">
+                      <tbody>
                         {history.map((item) => (
                           <tr key={item._id} className="hover:bg-surface-muted">
                             <td className="max-w-[16rem] truncate px-5 py-3 font-medium text-foreground">

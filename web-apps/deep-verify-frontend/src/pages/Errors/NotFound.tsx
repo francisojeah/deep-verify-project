@@ -28,13 +28,13 @@ const NotFound = () => {
 
         <div className="w-full flex justify-between gap-5 mt-4">
           <button
-            className="w-1/2 rounded-xl min-h-[48px] text-white bg-custom-primary text-base font-medium hover:bg-transparent hover:text-custom-primary border-2 border-custom-primary focus:outline-none"
+            className="w-1/2 rounded-xl min-h-[48px] text-white bg-brand text-base font-medium hover:bg-transparent hover:text-brand focus:outline-none"
             onClick={handleGoBack}
           >
             Go back
           </button>
           <button
-            className="w-1/2 rounded-xl bg-transparent min-h-[48px] text-custom-primary text-base font-medium hover:bg-custom-primary hover:text-white  border-2 border-custom-primary focus:outline-none"
+            className="w-1/2 rounded-xl bg-transparent min-h-[48px] text-brand text-base font-medium hover:bg-brand hover:text-white  focus:outline-none"
             onClick={onClickGoHome}
           >
             Go home
