@@ -30,6 +30,12 @@ from deepverify.detector import (  # noqa: E402
     get_detector,
 )
 
+if ON_ZERO_GPU:
+    # Must precede any cuda placement. ZeroGPU has no GPU attached at import
+    # time, and this is what defers CUDA init until inside a @spaces.GPU call;
+    # without it, building the detector raises "No CUDA GPUs are available".
+    import spaces
+
 MODEL_URL = "https://huggingface.co/yermandy/deepfake-detection"
 CODE_URL = "https://github.com/francisojeah/deep-verify-project"
 RESULTS = Path(__file__).parent / "benchmarks" / "results" / "latest.json"
@@ -44,8 +50,6 @@ def _score(face: Image.Image) -> float:
 
 
 if ON_ZERO_GPU:
-    import spaces
-
     # Only the forward pass is GPU-scoped; face detection stays on CPU. Keeping
     # the window small stretches the shared daily quota.
     _score = spaces.GPU(duration=15)(_score)
