@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/deep-verify-project/assets/icons/logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-VZXQ9GTM29"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-VZXQ9GTM29");
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deep Verify</title>
+    <script>
+      (function () {
+        const html = document.querySelector("html");
+        const isLightOrAuto =
+          localStorage.getItem("hs_theme") === "light" ||
+          (localStorage.getItem("hs_theme") === "auto" &&
+            !window.matchMedia("(prefers-color-scheme: dark)").matches);
+        const isDarkOrAuto =
+          localStorage.getItem("hs_theme") === "dark" ||
+          (localStorage.getItem("hs_theme") === "auto" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+        if (isLightOrAuto && html.classList.contains("dark"))
+          html.classList.remove("dark");
+        else if (isDarkOrAuto && html.classList.contains("light"))
+          html.classList.remove("light");
+        else if (isDarkOrAuto && !html.classList.contains("dark"))
+          html.classList.add("dark");
+        else if (isLightOrAuto && !html.classList.contains("light"))
+          html.classList.add("light");
+      })();
+    </script>
+    <script type="module" crossorigin src="/deep-verify-project/assets/index-BTuWsnbA.js"></script>
+    <link rel="stylesheet" crossorigin href="/deep-verify-project/assets/index-Bsp1WIfX.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
