@@ -55,6 +55,15 @@ The caveats that matter:
   rather than a benchmark name, and the gap between it and 0.924 should be read
   as "performance varies a lot by manipulation family", not as a precise
   characterisation of any named family.
+- **The linear probe is not the deployed model, and its headline number is
+  in-distribution.** `benchmarks/train_probe.py` fits logistic regression on frozen
+  CLIP embeddings and reaches 0.929 ROC-AUC on a held-out split of the family it
+  trained on, against 0.745 for the published checkpoint on those same images.
+  That comparison is asymmetric by construction: the probe has seen that family
+  and the checkpoint has not. Scored on FakeAVCeleb, which neither trained on, the
+  probe falls to **0.584** — near chance — while the checkpoint reaches 0.932. The
+  probe is a diagnostic showing the failure is in the head rather than the
+  features; it is not a better detector, and it is not served anywhere.
 - **Preprocessing is not identical to the paper's.** The upstream evaluation used
   DeepfakeBench's face extraction. This service uses OpenCV YuNet with a 1.3x
   square margin crop. Close in spirit, not identical, and that alone can move the

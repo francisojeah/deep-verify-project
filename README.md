@@ -88,6 +88,43 @@ no filenames, so unlike the first it **cannot be identified from its contents**.
 The measurement is real; the label on it is not verifiable. It is reported under
 its repo id for that reason.
 
+### Whose problem is the gap — the features, or the head?
+
+The published detector is CLIP ViT-L/14 with its LayerNorm parameters tuned. When
+it drops to 0.78 on an unfamiliar manipulation family, that could mean CLIP's
+features do not carry the signal, or that the tuned head simply does not transfer.
+Those have different fixes, so it is worth measuring rather than assuming.
+
+Freezing CLIP entirely and fitting **logistic regression** on its embeddings —
+1,400 train, 600 test, stratified, seed 42 — separates the two:
+
+| ROC-AUC                     | `Hemg/…` held-out split | FakeAVCeleb |
+| --------------------------- | ----------------------: | ----------: |
+| Published checkpoint        |                   0.745 |   **0.932** |
+| Linear probe on frozen CLIP |               **0.929** |       0.584 |
+
+Both models are scored on identical images in each column. The probe trained on
+the first family, neither trained on the second.
+
+Read the diagonal. **Each model wins on the family it has seen and collapses on
+the one it has not** — the probe falls to 0.584, which is close enough to a coin
+flip to be useless. So the features were never the problem: frozen CLIP already
+separates that family at 0.93, and the published head just does not transfer to it.
+
+The point is not that the probe beats the checkpoint. It is that a probe trained
+in twenty seconds reproduces the _same_ generalisation failure from the opposite
+direction. Cross-manipulation generalisation is the open problem in this field,
+and a single accuracy figure hides exactly this.
+
+Raw output: [`benchmarks/results/probe/`](web-apps/deep-verify-model-microservice/benchmarks/results/probe).
+The probe is **not deployed** — the service runs the published checkpoint, and the
+numbers shown in the product are that model's.
+
+```bash
+PYTHONPATH=. ./.venv/bin/python -m benchmarks.train_probe \
+  --dataset hemg-mixed --per-class 1000 --cross-dataset fakeavceleb --seed 42
+```
+
 Reproduce:
 
 ```bash
