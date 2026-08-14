@@ -8,10 +8,10 @@ type MetaTagsProps = {
 };
 
 const MetaTags = ({
-  title = "DeepVerify | Political Media Deepfake Detection",
-  keywords = "DeepVerify, Deepfake Detection, Political Media, AI, Machine Learning, Media Authentication, Image Analysis, Video Analysis, Political Images, Political Videos",
-  description = "DeepVerify specializes in detecting deepfakes in political media. Leverage our cutting-edge technology to analyze images and videos for authenticity and uncover potential manipulations in political content.",
-  pageUrl = window.location.href
+  title = "DeepVerify | Image Deepfake Detection",
+  keywords = "DeepVerify, Deepfake Detection, Face Manipulation, AI, Machine Learning, Media Authentication, Image Analysis, Image Forensics",
+  description = "Upload a photo containing a face and get the likelihood that it was digitally manipulated, alongside the benchmarks the detector was measured on.",
+  pageUrl = window.location.href,
 }: MetaTagsProps) => {
   const imageUrl = `/assets/icons/logo.png`;
 

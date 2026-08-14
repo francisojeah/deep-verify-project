@@ -19,20 +19,20 @@ const GameSection: React.FC = () => {
         <div className="mx-auto py-8 text-center">
           <div className="flex flex-col gap-8 justify-center items-center">
             <p className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Play the Deepfake Detection <span className="text-custom-primary">Game!</span>
+              Play the Deepfake Detection{" "}
+              <span className="text-custom-primary">Game!</span>
             </p>
             <p className="text-lg leading-relaxed text-black dark:text-white opacity-70">
-              Test your skills in identifying deepfakes with our interactive
-              game. Sharpen your abilities and challenge yourself to spot the
-              fakes in images, and videos!
+              Test yourself against the same images the detector sees. Spotting
+              a manipulated face is harder than it looks - which is rather the
+              point.
             </p>
             <Link to={"/game"}>
-          <ButtonComponent>
-            Play Now <FiArrowUpRight />
-            </ButtonComponent>
+              <ButtonComponent>
+                Play Now <FiArrowUpRight />
+              </ButtonComponent>
             </Link>
           </div>
-
         </div>
       </div>
     </section>
