@@ -23,6 +23,14 @@ export const BENCHMARKS: BenchmarkRun[] = [
     "prAuc": 0.942,
     "f1": 0.8382,
     "note": "lip-sync (Wav2Lip) and face-swap, on VoxCeleb2 sources"
+  },
+  {
+    "dataset": "Hemg/deepfake-and-real-images",
+    "images": 2000,
+    "rocAuc": 0.7794,
+    "prAuc": 0.7928,
+    "f1": 0.5958,
+    "note": "unknown"
   }
 ];
 

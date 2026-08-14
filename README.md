@@ -65,12 +65,37 @@ Three things to know about that number:
 Video-level AUC is reported alongside frame-level because frames from one source
 video are not independent, so the effective sample size is well below 2,210.
 
+### Performance is not one number
+
+A second run, same model, same code, same seed, on a different set of
+manipulations:
+
+| Benchmark                                 | Images |    ROC-AUC | PR-AUC | F1 @ 0.5 |
+| ----------------------------------------- | -----: | ---------: | -----: | -------: |
+| FakeAVCeleb — lip-sync + face-swap        |  2,210 | **0.9244** | 0.9420 |    0.838 |
+| `Hemg/deepfake-and-real-images` — unknown |  2,000 | **0.7794** | 0.7928 |    0.596 |
+
+**A 0.145 AUC drop from changing nothing but the manipulations.** Recall at the
+default threshold falls from 0.750 to 0.457 — it misses more than half. This is
+the point worth taking away: a single headline accuracy figure for a deepfake
+detector is close to meaningless, because the number is a property of the test
+set as much as of the model. It is why the threshold-free AUC is quoted first and
+why both runs are published rather than the better one.
+
+The honest caveat on the second row: that dataset has no card, no attribution and
+no filenames, so unlike the first it **cannot be identified from its contents**.
+The measurement is real; the label on it is not verifiable. It is reported under
+its repo id for that reason.
+
 Reproduce:
 
 ```bash
 cd web-apps/deep-verify-model-microservice
 PYTHONPATH=. ./.venv/bin/python -m benchmarks.run_benchmark \
   --dataset fakeavceleb --per-class 1200 --seed 42
+
+PYTHONPATH=. ./.venv/bin/python -m benchmarks.run_benchmark \
+  --dataset hemg-mixed --per-class 1000 --seed 42
 ```
 
 ## Architecture
@@ -145,8 +170,9 @@ image on CPU, so the trade is a second of latency for a demo that always answers
 ## What I would do next
 
 1. **Get official FaceForensics++ and Celeb-DF-v2 access** and measure
-   in-distribution, so the generalisation gap can be quantified rather than
-   asserted.
+   in-distribution. The spread between manipulation families is measured above;
+   what is still missing is the anchor — how the model does on the data it was
+   actually trained on.
 2. **Calibrate the threshold** against a cost model instead of leaving it at 0.5.
 3. **Video support** by sampling frames and aggregating, which is how the upstream
    paper reports its numbers and would close the gap with them.

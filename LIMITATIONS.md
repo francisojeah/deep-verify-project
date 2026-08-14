@@ -47,13 +47,14 @@ The caveats that matter:
   available. Every number here is cross-dataset and cross-manipulation, which is
   the harder setting. There is no measurement of the model in the domain it was
   trained on.
-- **Only one benchmark was completed.** A second run against
-  `Hemg/deepfake-and-real-images` was attempted, to compare across two unrelated
-  manipulation families, but it failed repeatedly on network errors fetching the
-  dataset shards. That dataset also carries no card and no source attribution, so
-  its origin cannot be verified from the data, which would have limited what the
-  comparison was worth. The spec is left in `benchmarks/datasets.py` so the run
-  can be repeated, and no partial or estimated figure from it appears anywhere.
+- **The second benchmark's dataset cannot be identified.**
+  `Hemg/deepfake-and-real-images` has no dataset card, no source attribution and
+  no filenames, so unlike the first set its origin cannot be checked from the
+  data. Its ROC-AUC of 0.779 is a real measurement on real images, but what
+  manipulation family it represents is unknown. It is reported under its repo id
+  rather than a benchmark name, and the gap between it and 0.924 should be read
+  as "performance varies a lot by manipulation family", not as a precise
+  characterisation of any named family.
 - **Preprocessing is not identical to the paper's.** The upstream evaluation used
   DeepfakeBench's face extraction. This service uses OpenCV YuNet with a 1.3x
   square margin crop. Close in spirit, not identical, and that alone can move the
