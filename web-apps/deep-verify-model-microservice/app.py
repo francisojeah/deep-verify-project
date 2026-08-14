@@ -18,7 +18,6 @@ if ON_ZERO_GPU:
     os.environ.setdefault("DEEPVERIFY_DEVICE", "cuda")
 
 import gradio as gr  # noqa: E402
-import uvicorn  # noqa: E402
 from PIL import Image  # noqa: E402
 
 from deepverify import api  # noqa: E402
@@ -214,8 +213,10 @@ with gr.Blocks(title="DeepVerify", theme=gr.themes.Soft()) as demo:
         api_name="detect",
     )
 
-# Gradio at the root, the REST API on its own paths, one process.
-app = gr.mount_gradio_app(api.app, demo, path="/")
-
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 7860)))
+    # Gradio owns the server here. Mounting it inside FastAPI and running uvicorn
+    # ourselves does work locally, but not on ZeroGPU: its runner binds 7860
+    # first and introspects the launched Blocks to find @spaces.GPU functions, so
+    # a self-run server fails on both counts. deepverify.api is still the REST
+    # surface for self-hosting - see the README.
+    demo.launch()
