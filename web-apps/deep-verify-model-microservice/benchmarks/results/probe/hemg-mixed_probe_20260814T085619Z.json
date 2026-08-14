@@ -1,0 +1,67 @@
+{
+  "run_at": "2026-08-14T08:56:19.856973+00:00",
+  "git_sha": "c7e10bc",
+  "dataset_key": "hemg-mixed",
+  "dataset_name": "Hemg/deepfake-and-real-images",
+  "dataset_repo": "Hemg/deepfake-and-real-images",
+  "provenance": "Community upload with no dataset card and no source attribution. Carries no filenames, so its origin cannot be verified from the data. Reported under its repo id rather than a benchmark name.",
+  "manipulation_family": "unknown",
+  "seed": 42,
+  "device": "mps",
+  "n_train": 1400,
+  "n_test": 600,
+  "split": "stratified, disjoint, seeded; identical for both models",
+  "models": {
+    "probe": {
+      "description": "Logistic regression on frozen CLIP ViT-L/14 image embeddings (openai/clip-vit-large-patch14). Trained here.",
+      "trained_here": true,
+      "metrics": {
+        "roc_auc": 0.9293333333333332,
+        "pr_auc": 0.9321854339198461,
+        "threshold_default": 0.5,
+        "precision_at_default": 0.8955223880597015,
+        "recall_at_default": 0.8,
+        "f1_at_default": 0.8450704225352113,
+        "accuracy_at_default": 0.8533333333333334,
+        "confusion_at_default": {
+          "tn": 272,
+          "fp": 28,
+          "fn": 60,
+          "tp": 240
+        },
+        "best_f1": 0.8589951377633711,
+        "best_f1_threshold": 0.42544570565223694,
+        "best_f1_precision": 0.8359621451104101,
+        "best_f1_recall": 0.8833333333333333,
+        "n_fake": 300,
+        "n_real": 300
+      }
+    },
+    "pretrained": {
+      "description": "yermandy/deepfake-detection, the published checkpoint. Not trained here.",
+      "trained_here": false,
+      "weights_sha256": "55c54d3f4d301ce07f0d08126fc4202572d20ea6952b039bc7a949a43714157d",
+      "metrics": {
+        "roc_auc": 0.7450222222222223,
+        "pr_auc": 0.773874209257512,
+        "threshold_default": 0.5,
+        "precision_at_default": 0.8278145695364238,
+        "recall_at_default": 0.4166666666666667,
+        "f1_at_default": 0.5543237250554324,
+        "accuracy_at_default": 0.665,
+        "confusion_at_default": {
+          "tn": 274,
+          "fp": 26,
+          "fn": 175,
+          "tp": 125
+        },
+        "best_f1": 0.7046979865771812,
+        "best_f1_threshold": 0.22135066986083984,
+        "best_f1_precision": 0.7094594594594594,
+        "best_f1_recall": 0.7,
+        "n_fake": 300,
+        "n_real": 300
+      }
+    }
+  }
+}

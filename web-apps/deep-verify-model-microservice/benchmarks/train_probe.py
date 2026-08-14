@@ -77,6 +77,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", default="hemg-mixed", choices=sorted(SPECS))
     parser.add_argument("--per-class", type=int, default=1000)
+    parser.add_argument(
+        "--cross-dataset",
+        choices=sorted(SPECS),
+        help="Also evaluate on a family the probe never trained on.",
+    )
+    parser.add_argument("--cross-per-class", type=int, default=300)
     parser.add_argument("--test-size", type=float, default=0.3)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--batch-size", type=int, default=16)
@@ -159,6 +165,37 @@ def main() -> int:
         },
     }
 
+    if args.cross_dataset:
+        # The probe is in-distribution above and the checkpoint is not, so the
+        # gap alone proves nothing about generalisation. This measures the probe
+        # the same hard way the checkpoint was measured.
+        cross = SPECS[args.cross_dataset]
+        print(f"Evaluating both on {cross.display_name}, unseen by the probe")
+        cross_cache = Path(__file__).parent / ".sample-cache" / f"probe-cross-{cross.key}"
+        cross_sample = load_balanced_sample(
+            cross, args.cross_per_class, args.seed, cross_cache
+        )
+        cross_y = np.array(
+            [1 if name == cross.fake_label else 0 for name in cross_sample.labels]
+        )
+
+        cross_probe, cross_base = [], []
+        for chunk, images in _batched(
+            cross_sample, cross, list(range(len(cross_sample))), args.batch_size
+        ):
+            cross_probe.extend(probe.predict_proba(encoder.embed(images))[:, 1])
+            cross_base.extend(detector.score_faces(images))
+
+        record["cross_dataset"] = {
+            "dataset_key": cross.key,
+            "dataset_name": cross.display_name,
+            "manipulation_family": cross.manipulation_family,
+            "n_images": len(cross_sample),
+            "note": "Neither model trained on this; both scored on identical images.",
+            "probe": compute_metrics(cross_y, np.array(cross_probe), threshold),
+            "pretrained": compute_metrics(cross_y, np.array(cross_base), threshold),
+        }
+
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     stamp = record["run_at"].replace("-", "").replace(":", "").split(".")[0] + "Z"
     path = RESULTS_DIR / f"{spec.key}_probe_{stamp}.json"
@@ -167,9 +204,14 @@ def main() -> int:
     probe_auc = record["models"]["probe"]["metrics"]["roc_auc"]
     base_auc = record["models"]["pretrained"]["metrics"]["roc_auc"]
     print()
-    print(f"  probe      ROC-AUC {probe_auc:.4f}")
-    print(f"  pretrained ROC-AUC {base_auc:.4f}")
-    print(f"  difference {probe_auc - base_auc:+.4f}")
+    print(f"  held-out split of {spec.display_name}  (probe trained on this family)")
+    print(f"    probe      ROC-AUC {probe_auc:.4f}")
+    print(f"    pretrained ROC-AUC {base_auc:.4f}")
+    if "cross_dataset" in record:
+        cross_record = record["cross_dataset"]
+        print(f"  {cross_record['dataset_name']}  (unseen by both)")
+        print(f"    probe      ROC-AUC {cross_record['probe']['roc_auc']:.4f}")
+        print(f"    pretrained ROC-AUC {cross_record['pretrained']['roc_auc']:.4f}")
     print(f"Wrote {path}")
     return 0
 

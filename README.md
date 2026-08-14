@@ -189,17 +189,21 @@ public `/analyze` page works while the API is undeployed.
 
 ## What I would do next
 
-1. **Get official FaceForensics++ and Celeb-DF-v2 access** and measure
-   in-distribution. The spread between manipulation families is measured above;
-   what is still missing is the anchor — how the model does on the data it was
-   actually trained on.
-2. **Calibrate the threshold** against a cost model instead of leaving it at 0.5.
-3. **Video support** by sampling frames and aggregating, which is how the upstream
+1. **Specialise to political media**, which is what the project set out to do and
+   has not done. The detector is general face-manipulation detection; calling it
+   political would be a claim about data it has never been tested on. Doing it
+   honestly is a curation and access problem — assembling political deepfakes that
+   actually circulated, with defensible labels — not a modelling one.
+2. **Get official FaceForensics++ and Celeb-DF-v2 access** and measure
+   in-distribution. The spread between manipulation families is measured; what is
+   still missing is the anchor — how the model does on the data it was trained on.
+3. **Calibrate the threshold** against a cost model instead of leaving it at 0.5.
+4. **Video support** by sampling frames and aggregating, which is how the upstream
    paper reports its numbers and would close the gap with them.
-4. **Evaluate on [Deepfake-Eval-2024](https://huggingface.co/datasets/nuriachandra/Deepfake-Eval-2024)**,
+5. **Evaluate on [Deepfake-Eval-2024](https://huggingface.co/datasets/nuriachandra/Deepfake-Eval-2024)**,
    an in-the-wild benchmark of deepfakes actually circulated in 2024. It is
    access-gated, so it needs a request rather than an afternoon.
-5. **Per-group error rates.** No demographic breakdown was computed, so uniform
+6. **Per-group error rates.** No demographic breakdown was computed, so uniform
    accuracy across groups cannot be assumed.
 
 ## Licence
