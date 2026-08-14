@@ -49,7 +49,8 @@ async function startJob(path: string): Promise<string> {
       data: [{ path, meta: { _type: "gradio.FileData" } }],
     }),
   });
-  if (!response.ok) throw new Error(`Could not start detection (${response.status})`);
+  if (!response.ok)
+    throw new Error(`Could not start detection (${response.status})`);
 
   const { event_id } = await response.json();
   if (!event_id) throw new Error("Detection did not return an event id");
@@ -57,7 +58,9 @@ async function startJob(path: string): Promise<string> {
 }
 
 async function readResult(eventId: string): Promise<unknown[]> {
-  const response = await fetch(`${ML_SERVICE_URL}/gradio_api/call/detect/${eventId}`);
+  const response = await fetch(
+    `${ML_SERVICE_URL}/gradio_api/call/detect/${eventId}`,
+  );
   if (!response.ok || !response.body) {
     throw new Error(`Could not read detection result (${response.status})`);
   }
@@ -94,32 +97,48 @@ async function readResult(eventId: string): Promise<unknown[]> {
   throw new Error("Detection stream ended without a result");
 }
 
-/** Parse the Gradio Label output into the shape the UI needs. */
+interface GradioDetails {
+  fake_probability: number;
+  real_probability: number;
+  threshold: number;
+  is_deepfake: boolean;
+  face_box: [number, number, number, number];
+  face_confidence: number;
+  model_id: string;
+}
+
+/** Map the Gradio outputs into the shape the UI needs.
+ *
+ * The service returns structured details as a third output. The Label output is
+ * read as a fallback so a client deployed ahead of the service still works.
+ */
 function toResult(output: unknown[]): DetectionResult {
+  const details = output[2] as GradioDetails | undefined;
+  if (details?.fake_probability !== undefined) {
+    return {
+      isDeepfake: details.is_deepfake,
+      fakeProbability: details.fake_probability,
+      realProbability: details.real_probability,
+      threshold: details.threshold,
+      faceBox: details.face_box ?? null,
+      faceConfidence: details.face_confidence ?? null,
+      modelId: details.model_id,
+    };
+  }
+
   const label = output[0] as GradioLabel;
   const scores = Object.fromEntries(
-    (label?.confidences ?? []).map((c) => [c.label, c.confidence])
+    (label?.confidences ?? []).map((c) => [c.label, c.confidence]),
   );
-
   const fake = scores["Manipulated"] ?? 0;
-  const verdict = String(output[1] ?? "");
-  const boxMatch = verdict.match(/\((\d+), (\d+), (\d+), (\d+)\)/);
-  const confMatch = verdict.match(/confidence\s+([\d.]+)/);
 
   return {
     isDeepfake: fake >= 0.5,
     fakeProbability: fake,
     realProbability: scores["Authentic"] ?? 1 - fake,
     threshold: 0.5,
-    faceBox: boxMatch
-      ? ([+boxMatch[1], +boxMatch[2], +boxMatch[3], +boxMatch[4]] as [
-          number,
-          number,
-          number,
-          number,
-        ])
-      : null,
-    faceConfidence: confMatch ? Number(confMatch[1]) : null,
+    faceBox: null,
+    faceConfidence: null,
     modelId: "yermandy/deepfake-detection",
   };
 }

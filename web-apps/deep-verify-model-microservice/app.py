@@ -111,7 +111,17 @@ def analyse(image):
         f"{threshold * 100:.0f}%.\n\n"
         f"Face located at {face.box}, detector confidence {face.confidence * 100:.1f}%."
     )
-    return scores, verdict
+    # Third output so API clients read fields rather than parsing the prose above.
+    details = {
+        "fake_probability": fake,
+        "real_probability": 1.0 - fake,
+        "threshold": threshold,
+        "is_deepfake": fake >= threshold,
+        "face_box": list(face.box),
+        "face_confidence": face.confidence,
+        "model_id": detector.model_id,
+    }
+    return scores, verdict, details
 
 
 INTRO = """
@@ -155,6 +165,7 @@ with gr.Blocks(title="DeepVerify", theme=gr.themes.Soft()) as demo:
         with gr.Column():
             label_output = gr.Label(num_top_classes=2, label="Model output")
             verdict_output = gr.Markdown()
+            details_output = gr.JSON(label="Response", visible=False)
 
     with gr.Accordion("Measured performance", open=False):
         gr.Markdown(_measured_performance())
@@ -165,7 +176,7 @@ with gr.Blocks(title="DeepVerify", theme=gr.themes.Soft()) as demo:
     submit.click(
         analyse,
         inputs=image_input,
-        outputs=[label_output, verdict_output],
+        outputs=[label_output, verdict_output, details_output],
         api_name="detect",
     )
 
