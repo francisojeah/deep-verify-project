@@ -1,5 +1,4 @@
 /// <reference types="vite/client" />
-/// <reference types="vite-plugin-pwa/client" />
 
 interface ImportMetaEnv {
   /** NestJS API: accounts and detection history. */

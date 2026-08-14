@@ -24,7 +24,6 @@ type Props = {
     "styles.css": string;
     "main.js": string;
     manifest?: string;
-    "vite-plugin-pwa:register-sw"?: string;
     "additional-styles": string[];
     "additional-jss": string[];
     initialContentMap: {
@@ -242,12 +241,6 @@ const App: React.FC<Props> = ({ assetMap }) => {
 
             {assetMap["manifest"] && (
               <link rel="manifest" href={assetMap["manifest"]}></link>
-            )}
-            {assetMap["vite-plugin-pwa:register-sw"] && (
-              <script
-                id="vite-plugin-pwa:register-sw"
-                src="/registerSW.js"
-              ></script>
             )}
             {assetMap.initialContentMap && (
               <title>{assetMap.initialContentMap["title"]}</title>
