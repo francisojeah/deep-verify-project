@@ -130,3 +130,5 @@ dist
 .pnp.*
 
 __pycache__/
+# Regenerate with benchmarks/build_demo_set.py; research-licensed data, not redistributed.
+demo-assets/

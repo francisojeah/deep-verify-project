@@ -76,8 +76,8 @@ const AboutPage = () => {
                   Innovation and Excellence
                 </p>
                 <p className="text-black dark:text-white opacity-70">
-                  We continually advance our technology to stay ahead of
-                  deepfake tactics, ensuring top-notch performance and accuracy.
+                  Every performance figure we publish comes from a benchmark run
+                  we have committed, including the ones that are unflattering.
                 </p>
               </div>
               <div className="p-6 rounded-2xl transition-transform transform hover:scale-105 border border-neutral-300 dark:border-neutral-500">

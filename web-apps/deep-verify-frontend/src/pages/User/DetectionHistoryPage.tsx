@@ -13,7 +13,7 @@ import Alert from "../../components/ui/Alert";
 import { api, errorMessage } from "../../lib/api";
 import { DetectionHistory } from "./UserDashboard";
 
-const columns = ["File", "Verdict", "p(manipulated)", "Analysed"];
+const columns = ["File", "Verdict", "Manipulated", "Analysed"];
 
 const DetectionHistoryPage: React.FC = () => {
   const [history, setHistory] = useState<DetectionHistory[]>([]);
@@ -26,7 +26,10 @@ const DetectionHistoryPage: React.FC = () => {
     api
       .get<DetectionHistory[]>("/detection/detection-history")
       .then(({ data }) => active && setHistory(data ?? []))
-      .catch((caught) => active && setError(errorMessage(caught, "Could not load history.")))
+      .catch(
+        (caught) =>
+          active && setError(errorMessage(caught, "Could not load history.")),
+      )
       .finally(() => active && setLoading(false));
     return () => {
       active = false;
@@ -38,7 +41,9 @@ const DetectionHistoryPage: React.FC = () => {
       <MetaTags title="Detection History" />
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <header className="pb-6">
-          <h1 className="text-2xl font-semibold text-foreground">Detection history</h1>
+          <h1 className="text-2xl font-semibold text-foreground">
+            Detection history
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Every image you have analysed, most recent first.
           </p>
@@ -91,12 +96,14 @@ const DetectionHistoryPage: React.FC = () => {
                         {item.fileName}
                       </td>
                       <td className="px-5 py-3">
-                        <StatusPill tone={item.isDeepfake ? "danger" : "success"}>
+                        <StatusPill
+                          tone={item.isDeepfake ? "danger" : "success"}
+                        >
                           {item.isDeepfake ? "Manipulated" : "Authentic"}
                         </StatusPill>
                       </td>
                       <td className="px-5 py-3 tabular-nums text-muted-foreground">
-                        {(item.confidence / 100).toFixed(4)}
+                        {(item.fakeProbability * 100).toFixed(1)}%
                       </td>
                       <td className="px-5 py-3 text-muted-foreground">
                         {new Date(item.detectedAt).toLocaleString()}

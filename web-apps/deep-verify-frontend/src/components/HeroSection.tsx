@@ -10,7 +10,7 @@ const HeroSection = () => {
       </div>
 
       <section className="relative overflow  my-8">
-      <div className="absolute inset-0 z-[-1]">
+        <div className="absolute inset-0 z-[-1]">
           <img
             src="/assets/icons/left-donut.svg"
             alt="Left Donut"
@@ -28,24 +28,26 @@ const HeroSection = () => {
           </div>
 
           <p className="mb-3 text-center font-bold dark:text-white text-4xl leading-tight lg:text-7xl">
-            Detect Political<br />
+            Detect Political
+            <br />
             <span className="relative whitespace-nowrap overflow-visible w-full">
               <span className="invisible">Image Deepfakes</span>
               <div className="cube-spinner h-full">
                 <div className="face-1">Image Deepfakes</div>
-                <div className="face-2">Image Deepfakes</div>
-                <div className="face-3">Video Deepfakes</div>
+                <div className="face-2">Face Swaps</div>
+                <div className="face-3">Manipulated Faces</div>
               </div>
             </span>{" "}
             <br />
             with Confidence
           </p>
           <p className="mb-9 max-w-2xl text-base text-center leading-relaxed dark:text-zinc-400 md:text-2xl md:leading-relaxed">
-            Safeguarding Political Integrity with Advanced Deepfake Detection Technology
+            Safeguarding Political Integrity with Advanced Deepfake Detection
+            Technology
           </p>
-          <Link to={"/signup"}>
+          <Link to={"/analyze"}>
             <ButtonComponent>
-              Get Started
+              Analyse an image
               <FiArrowUpRight />
             </ButtonComponent>
           </Link>

@@ -21,7 +21,7 @@ const NavBar = () => {
   const [hasScrolled, setHasScrolled] = useState(false);
 
   const userSlice = useSelector<RootState, UserStateProps>(
-    (state) => state.user
+    (state) => state.user,
   );
 
   const location = useLocation();
@@ -47,7 +47,7 @@ const NavBar = () => {
     },
     {
       title: "Detection",
-      link: "dashboard",
+      link: "analyze",
       isActive: false,
     },
     {
@@ -83,12 +83,12 @@ const NavBar = () => {
       .filter((element) => element !== "");
     const pathTitle = pathName[0];
     const navBarMenuTitle = menus.find(
-      (navBarmenu) => navBarmenu.link === pathTitle
+      (navBarmenu) => navBarmenu.link === pathTitle,
     )?.title;
 
     if (navBarMenuTitle && navBarMenuTitle !== activeNavBarMenu) {
       handleNavBarMenuClick(
-        menus.findIndex((navBarmenu) => navBarmenu.title === navBarMenuTitle)
+        menus.findIndex((navBarmenu) => navBarmenu.title === navBarMenuTitle),
       );
     }
   }, [location.pathname, menus, activeNavBarMenu, dispatch]);
@@ -148,7 +148,10 @@ const NavBar = () => {
                   <div className="flex items-center gap-4">
                     <Avatar
                       alt="User"
-                      img={userSlice?.user?.profileImage || "/assets/icons/profile.svg"}
+                      img={
+                        userSlice?.user?.profileImage ||
+                        "/assets/icons/profile.svg"
+                      }
                       rounded
                     />
                   </div>
@@ -162,7 +165,10 @@ const NavBar = () => {
                     Deep Verify user
                   </span>
                 </DropdownHeader>
-                <DropdownItem onClick={handleLogout} className="text-base dark:text-white text-black">
+                <DropdownItem
+                  onClick={handleLogout}
+                  className="text-base dark:text-white text-black"
+                >
                   Sign out
                 </DropdownItem>
               </Dropdown>
@@ -192,9 +198,12 @@ const NavBar = () => {
               userSlice?.user?.email ? (
                 <>
                   <div className="flex items-center gap-4">
-                  <Avatar
+                    <Avatar
                       alt="User"
-                      img={userSlice?.user?.profileImage || "/assets/icons/profile.svg"}
+                      img={
+                        userSlice?.user?.profileImage ||
+                        "/assets/icons/profile.svg"
+                      }
                       rounded
                     />
                     <svg
@@ -246,14 +255,19 @@ const NavBar = () => {
             {menus.map(({ title, link }, index) => (
               <DropdownItem className="w-full" key={index}>
                 <Link className="w-full" to={`/${link}`} key={index}>
-                  <div className="flex w-full text-base dark:text-white text-black">{title}</div>
+                  <div className="flex w-full text-base dark:text-white text-black">
+                    {title}
+                  </div>
                 </Link>
               </DropdownItem>
             ))}
             <DropdownDivider />
 
             {userSlice?.user?.email ? (
-              <DropdownItem onClick={handleLogout} className="text-base dark:text-white text-black">
+              <DropdownItem
+                onClick={handleLogout}
+                className="text-base dark:text-white text-black"
+              >
                 Sign out
               </DropdownItem>
             ) : (

@@ -4,6 +4,8 @@ import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // GitHub Pages serves a project site from a subpath; Vercel and local serve from root.
+  base: process.env.VITE_BASE_PATH ?? "/",
   plugins: [
     react(),
     VitePWA({

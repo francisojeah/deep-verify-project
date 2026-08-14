@@ -5,6 +5,7 @@ FastAPI service in deepverify.api imports from the same module.
 """
 
 import json
+import os
 from pathlib import Path
 
 import gradio as gr
@@ -16,41 +17,45 @@ MODEL_URL = "https://huggingface.co/yermandy/deepfake-detection"
 CODE_URL = "https://github.com/francisojeah/deep-verify-project"
 RESULTS = Path(__file__).parent / "benchmarks" / "results" / "latest.json"
 
-try:
-    import spaces
+# Set by the platform only on ZeroGPU hardware. Importing `spaces` is not a
+# reliable signal: the package installs everywhere.
+ON_ZERO_GPU = os.environ.get("SPACES_ZERO_GPU", "").lower() in {"1", "true"}
 
-    ON_ZERO_GPU = True
-except ImportError:  # local development
-    ON_ZERO_GPU = False
-
-# ZeroGPU requires a cuda placement at module level and refuses to start without
-# at least one @spaces.GPU function, so the primary detector is GPU-resident.
 detector = DeepfakeDetector(Settings(device="cuda" if ON_ZERO_GPU else "auto"))
 
 _cpu_detector: DeepfakeDetector | None = None
 
 
-def _score_on_cpu(face) -> float:
-    """Fallback for when the shared GPU quota is spent.
-
-    Built lazily so the second copy of the weights only costs memory if it is
-    actually needed. CLIP ViT-L/14 is about a second per image on CPU, which is
-    a better demo than an error.
-    """
-    global _cpu_detector
-    if _cpu_detector is None:
-        _cpu_detector = DeepfakeDetector(Settings(device="cpu"))
-    return _cpu_detector.score_faces([face])[0]
-
-
-def _score_on_gpu(face) -> float:
+def _score(face) -> float:
     return detector.score_faces([face])[0]
 
 
 if ON_ZERO_GPU:
+    import spaces
+
     # Only the forward pass is GPU-scoped; face detection stays on CPU. Keeping
-    # the window small stretches the daily quota and improves queue priority.
-    _score_on_gpu = spaces.GPU(duration=15)(_score_on_gpu)
+    # the window small stretches the shared daily quota.
+    _score = spaces.GPU(duration=15)(_score)
+
+    def _score_on_cpu(face) -> float:
+        """Fallback for when the shared GPU quota is spent.
+
+        Built lazily so the second copy of the weights only costs memory if it
+        is actually needed. A slower answer beats an error.
+        """
+        global _cpu_detector
+        if _cpu_detector is None:
+            _cpu_detector = DeepfakeDetector(Settings(device="cpu"))
+        return _cpu_detector.score_faces([face])[0]
+
+
+def score_face(face) -> float:
+    if not ON_ZERO_GPU:
+        return _score(face)
+    try:
+        return _score(face)
+    except Exception:  # quota spent or queue timeout - answer anyway
+        return _score_on_cpu(face)
 
 
 def _measured_performance() -> str:
@@ -60,24 +65,26 @@ def _measured_performance() -> str:
     which is not backed by a committed benchmark run.
     """
     if not RESULTS.exists():
-        return (
-            "**Measured performance:** benchmark not yet run. No number is shown "
-            "here until one is measured and committed to the repository."
-        )
+        return "No benchmark has been run, so no performance figure is shown."
 
     data = json.loads(RESULTS.read_text())
     lines = [
-        "**Measured performance** (my own runs, raw output committed to the repo):",
-        "",
         "| Benchmark | Images | ROC-AUC | PR-AUC | F1 @ 0.5 |",
         "| --- | --- | --- | --- | --- |",
     ]
     for run in data["runs"]:
         m = run["metrics"]
         lines.append(
-            f"| {run['dataset_name']} | {run['n_images']:,} | {m['roc_auc']:.3f} "
-            f"| {m['pr_auc']:.3f} | {m['f1_at_default']:.3f} |"
+            f"| {run['dataset_name']} | {run['n_images']:,} | "
+            f"{m['roc_auc'] * 100:.1f}% | {m['pr_auc'] * 100:.1f}% | "
+            f"{m['f1_at_default'] * 100:.1f}% |"
         )
+    lines.append("")
+    lines.append(
+        f"Measured by [`benchmarks/run_benchmark.py`]({CODE_URL}), raw output committed "
+        "to the repository. The spread between the two rows is the point: detector "
+        "performance is a property of the manipulation family as much as of the model."
+    )
     return "\n".join(lines)
 
 
@@ -85,63 +92,54 @@ def analyse(image):
     if image is None:
         raise gr.Error("Upload an image first.")
 
-    # Face detection runs here, outside any GPU window: it is cheap, and it keeps
-    # the no-face case a plain exception rather than one crossing a process
-    # boundary.
+    # Face detection runs outside any GPU window: it is cheap, and it keeps the
+    # no-face case a plain exception rather than one crossing a process boundary.
     try:
         face = detector.crop_face(image)
     except NoFaceDetectedError:
         raise gr.Error(
-            "No face detected. This model is trained on face crops, so a score on a "
-            "face-free image would be meaningless - it returns nothing rather than guess."
+            "No face detected. This model scores face crops, so a score here would "
+            "be meaningless - it returns nothing rather than guess."
         )
 
-    try:
-        fake_probability = _score_on_gpu(face.image)
-    except Exception:  # quota spent, queue timeout - answer anyway
-        fake_probability = _score_on_cpu(face.image)
-
+    fake = score_face(face.image)
     threshold = detector.threshold
-    is_deepfake = fake_probability >= threshold
-    scores = {"Manipulated": fake_probability, "Authentic": 1.0 - fake_probability}
+    scores = {"Manipulated": fake, "Authentic": 1.0 - fake}
     verdict = (
-        f"### {'Likely manipulated' if is_deepfake else 'No manipulation detected'}\n\n"
-        f"p(manipulated) = **{fake_probability:.4f}** "
-        f"at a decision threshold of {threshold}.\n\n"
-        f"Face found at {face.box} with detector confidence {face.confidence:.3f}."
+        f"### {'Likely manipulated' if fake >= threshold else 'No manipulation detected'}\n\n"
+        f"**{fake * 100:.1f}%** likelihood of manipulation, at a decision threshold of "
+        f"{threshold * 100:.0f}%.\n\n"
+        f"Face located at {face.box}, detector confidence {face.confidence * 100:.1f}%."
     )
     return scores, verdict
 
 
-PROVENANCE = f"""
-# DeepVerify - image deepfake detection
+INTRO = """
+# DeepVerify
 
-**I did not train this model.** It is a published pre-trained checkpoint:
-[`yermandy/deepfake-detection`]({MODEL_URL}) - a CLIP ViT-L/14 visual encoder with
-LN-tuning, trained on FaceForensics++ by Yermakov et al. and released under MIT.
-Weights are downloaded from that repository at startup and used unmodified.
-
-What I built is the service around it: face detection and cropping, the inference
-pipeline, a FastAPI service, this deployment, and the benchmark below.
-[Source code]({CODE_URL})
+Upload a photo containing a face. The detector returns the likelihood that the
+face was digitally manipulated.
 """
 
-LIMITATIONS = """
-- **Images only.** No video or audio support.
-- **Faces only.** Without a detected face the service returns an error, not a score.
-- **Frame-level.** The published paper reports video-level AUROC by aggregating
-  many frames; a single image is a strictly harder and noisier setting.
-- **Cross-manipulation generalisation is weak.** The model was trained on
-  FaceForensics++ face-swap and reenactment artefacts. Lip-sync manipulations such
-  as Wav2Lip are a different family and are frequently missed - the measured
-  numbers below show this rather than hide it.
-- **0.5 is an arbitrary threshold**, not a calibrated operating point.
-- Compression, resolution and unusual lighting all degrade the score.
-- Treat the output as one signal, never as proof.
+ABOUT = f"""
+**Model** — [`yermandy/deepfake-detection`]({MODEL_URL}): a CLIP ViT-L/14 visual encoder
+with LN-tuning, trained on FaceForensics++ by Yermakov et al. and released under MIT.
+This project runs those published weights unmodified; it does not train them. What it
+adds is the face detection and cropping, the inference pipeline, the API, the
+benchmarks below, and this deployment. [Source]({CODE_URL})
+
+**Scope** — Images only, one face per image, single frame. Without a detectable face
+the service returns an error rather than a score.
+
+**Reading the number** — The threshold is 50% and is not calibrated against any cost
+model, so treat scores near it as uncertain. The model was trained on face-swap and
+reenactment artefacts; lip-sync manipulations and fully synthetic faces are different
+families and are missed more often. Compression, low resolution and unusual lighting
+all degrade it. One signal, never proof.
 """
 
-with gr.Blocks(title="DeepVerify") as demo:
-    gr.Markdown(PROVENANCE)
+with gr.Blocks(title="DeepVerify", theme=gr.themes.Soft()) as demo:
+    gr.Markdown(INTRO)
 
     with gr.Row():
         with gr.Column():
@@ -158,10 +156,11 @@ with gr.Blocks(title="DeepVerify") as demo:
             label_output = gr.Label(num_top_classes=2, label="Model output")
             verdict_output = gr.Markdown()
 
-    gr.Markdown(_measured_performance())
+    with gr.Accordion("Measured performance", open=False):
+        gr.Markdown(_measured_performance())
 
-    with gr.Accordion("Limitations - read before trusting any of this", open=False):
-        gr.Markdown(LIMITATIONS)
+    with gr.Accordion("Model, scope and limitations", open=False):
+        gr.Markdown(ABOUT)
 
     submit.click(
         analyse,

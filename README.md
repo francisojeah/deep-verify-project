@@ -1,30 +1,31 @@
 # DeepVerify
 
-Image deepfake detection: upload a photo containing a face, get a probability
+Image deepfake detection: upload a photo containing a face, get the likelihood
 that the face was manipulated, with the model's provenance and measured
 performance shown next to the result.
 
-|                      |                                                                                           |
-| -------------------- | ----------------------------------------------------------------------------------------- |
-| **Live demo**        | https://huggingface.co/spaces/francisojeah/deep-verify                                    |
-| **Model**            | [`yermandy/deepfake-detection`](https://huggingface.co/yermandy/deepfake-detection) (MIT) |
-| **Measured results** | [`benchmarks/results/`](web-apps/deep-verify-model-microservice/benchmarks/results)       |
-| **Limitations**      | [LIMITATIONS.md](LIMITATIONS.md)                                                          |
+|                       |                                                                                           |
+| --------------------- | ----------------------------------------------------------------------------------------- |
+| **Live site**         | https://francisojeah.github.io/deep-verify-project/                                       |
+| **Detection service** | https://huggingface.co/spaces/francisojeah/deep-verify                                    |
+| **Model**             | [`yermandy/deepfake-detection`](https://huggingface.co/yermandy/deepfake-detection) (MIT) |
+| **Measured results**  | [`benchmarks/results/`](web-apps/deep-verify-model-microservice/benchmarks/results)       |
+| **Limitations**       | [LIMITATIONS.md](LIMITATIONS.md)                                                          |
 
-## I did not train this model
+## The model
 
-DeepVerify runs a **published pre-trained checkpoint**: a CLIP ViT-L/14 visual
+DeepVerify runs a published pre-trained checkpoint: a CLIP ViT-L/14 visual
 encoder with LN-tuning, trained on FaceForensics++ by Yermakov et al. and
 released under MIT. The weights are downloaded from that repository at startup
-and used unmodified. No training or fine-tuning happens here.
+and used unmodified — nothing is trained or fine-tuned here.
 
-What this repository contains is the engineering around it: face detection and
+What this repository contains is the engineering around them: face detection and
 cropping, the inference pipeline, a FastAPI service, an API layer with accounts
-and history, a React client, the deployment, and the benchmark below.
+and history, a React client, the deployment, and the benchmarks below.
 
 The upstream authors report video-level AUROC of 98.0% on DFD, 96.6% on
-Celeb-DF-v2, 91.5% on FFIW and 87.2% on DFDC. **Those are their numbers, not
-mine.** Mine are below.
+Celeb-DF-v2, 91.5% on FFIW and 87.2% on DFDC. Those are their measurements on
+data this project has no access to. The measurements below are its own.
 
 ## Measured performance
 
@@ -101,8 +102,8 @@ PYTHONPATH=. ./.venv/bin/python -m benchmarks.run_benchmark \
 ## Architecture
 
 ```
-React + Vite ──┬────────────────────────────► Hugging Face Space (CPU)
-  (Vercel)     │                                 Gradio adapter
+React + Vite ──┬────────────────────────────► Hugging Face Space
+(GitHub Pages) │                                 Gradio adapter
                │                                 └─ deepverify.detector
                └──► NestJS API ──────────────────────────┘
                      (Render)        detection, history, accounts
@@ -150,22 +151,25 @@ cd web-apps/deep-verify-frontend && npm install && npm run dev
 
 ## Deployment
 
-| Service   | Host               | Notes                                                |
-| --------- | ------------------ | ---------------------------------------------------- |
-| Detection | Hugging Face Space | Runs on CPU, ~1-2 s per image. Sleeps when idle.     |
-| API       | Render             | Free tier spins down after 15 min; ~50 s cold start. |
-| Client    | Vercel             | Root directory `web-apps/deep-verify-frontend`.      |
-| Database  | MongoDB Atlas M0   | Free tier.                                           |
+| Service   | Host               | Notes                                                     |
+| --------- | ------------------ | --------------------------------------------------------- |
+| Client    | GitHub Pages       | `./scripts/deploy-frontend.sh`, published from `gh-pages` |
+| Detection | Hugging Face Space | `./scripts/deploy-space.sh`. Sleeps when idle.            |
+| API       | Render             | Not deployed. Free tier spins down after 15 min.          |
+| Database  | MongoDB Atlas M0   | Not deployed.                                             |
 
 Render's free tier has 512 MB of RAM, which cannot hold a 607 MB model, so the
-detector is not deployed there. A Hugging Face Space puts the demo on the same
-page as the model card, which is the right place for it when the whole point is
-that the weights are someone else's.
+detector is not deployed there. A Hugging Face Space puts the service on the same
+page as the model card it runs, which is the right place for it.
 
-The Space runs the model on **CPU on purpose**. ZeroGPU is free and much faster,
-but its quota is a few minutes of GPU time per day shared across visitors, and it
-starts refusing runs once that is spent. CLIP ViT-L/14 costs about a second per
-image on CPU, so the trade is a second of latency for a demo that always answers.
+The Space runs on ZeroGPU, whose quota is a few minutes of GPU time per day
+shared across all visitors. Rather than surface a quota error, the app falls back
+to scoring on CPU — about a second per image instead of a fraction of one. A spent
+quota costs latency, not an answer.
+
+Detection works without the API layer: the client calls the Space directly, and
+accounts and history are the only features that need NestJS. That is why the
+public `/analyze` page works while the API is undeployed.
 
 ## What I would do next
 

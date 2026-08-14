@@ -17,7 +17,7 @@ interface DetectionDetails {
   fileName: string;
   mediaType: string;
   isDeepfake: boolean;
-  confidence: number;
+  fakeProbability: number;
   detectedAt: string;
 }
 
@@ -27,7 +27,9 @@ const Field: React.FC<{ label: string; children: React.ReactNode }> = ({
 }) => (
   <div className="rounded-lg border border-border px-4 py-3">
     <dt className="text-xs text-muted-foreground">{label}</dt>
-    <dd className="mt-1 truncate text-sm font-medium text-foreground">{children}</dd>
+    <dd className="mt-1 truncate text-sm font-medium text-foreground">
+      {children}
+    </dd>
   </div>
 );
 
@@ -42,21 +44,27 @@ const DetectionDetailsPage: React.FC = () => {
     api
       .get<DetectionDetails>(`/detection/detection/${id}`)
       .then(({ data }) => active && setDetails(data))
-      .catch((caught) => active && setError(errorMessage(caught, "Could not load this detection.")))
+      .catch(
+        (caught) =>
+          active &&
+          setError(errorMessage(caught, "Could not load this detection.")),
+      )
       .finally(() => active && setLoading(false));
     return () => {
       active = false;
     };
   }, [id]);
 
-  const probability = details ? details.confidence / 100 : 0;
+  const probability = details?.fakeProbability ?? 0;
 
   return (
     <DashboardLayout>
       <MetaTags />
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <header className="pb-6">
-          <h1 className="text-2xl font-semibold text-foreground">Detection record</h1>
+          <h1 className="text-2xl font-semibold text-foreground">
+            Detection record
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             A stored result from a previous analysis.
           </p>
@@ -75,7 +83,9 @@ const DetectionDetailsPage: React.FC = () => {
             <EmptyState
               icon={<FiAlertCircle className="h-5 w-5" aria-hidden />}
               title="Detection not found"
-              description={error ?? "This record does not exist or is no longer available."}
+              description={
+                error ?? "This record does not exist or is no longer available."
+              }
               action={
                 <Link to="/dashboard">
                   <Button variant="secondary">Back to dashboard</Button>
@@ -86,14 +96,19 @@ const DetectionDetailsPage: React.FC = () => {
         ) : (
           <div className="space-y-6">
             <Card>
-              <CardHeader title="Analysis result" icon={<FiShield aria-hidden />} />
+              <CardHeader
+                title="Analysis result"
+                icon={<FiShield aria-hidden />}
+              />
               <CardBody className="space-y-4">
                 <div className="flex items-center justify-between gap-3">
                   <StatusPill tone={details.isDeepfake ? "danger" : "success"}>
-                    {details.isDeepfake ? "Likely manipulated" : "No manipulation detected"}
+                    {details.isDeepfake
+                      ? "Likely manipulated"
+                      : "No manipulation detected"}
                   </StatusPill>
                   <span className="text-2xl font-semibold tabular-nums text-foreground">
-                    {probability.toFixed(4)}
+                    {(probability * 100).toFixed(1)}%
                   </span>
                 </div>
                 <div className="h-2 w-full overflow-hidden rounded-lg bg-surface-muted">
@@ -105,7 +120,8 @@ const DetectionDetailsPage: React.FC = () => {
                   />
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  p(manipulated) from the pre-trained yermandy/deepfake-detection model.
+                  Likelihood that the face in this image was digitally
+                  manipulated.
                 </p>
               </CardBody>
             </Card>
@@ -127,8 +143,8 @@ const DetectionDetailsPage: React.FC = () => {
             </Card>
 
             <Alert tone="neutral">
-              Uploaded images are not retained after analysis, so the original media
-              cannot be shown here.
+              Uploaded images are not retained after analysis, so the original
+              media cannot be shown here.
             </Alert>
           </div>
         )}
